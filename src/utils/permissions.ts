@@ -20,3 +20,11 @@ export const removeItems = () => {
 export const setPermission = (permissions: Array<string>) => {
   return ls.set("user_permissions", JSON.stringify(permissions));
 };
+
+export const getPermission = (): Array<string> => {
+  return JSON.parse(ls.get("user_permissions") || "[]");
+};
+
+export const hasPermission = (permission: string[]) => {
+  return getPermission().filter((e) => permission.includes(e)).length > 0;
+};

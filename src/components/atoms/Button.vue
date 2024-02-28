@@ -36,6 +36,14 @@ const button_class = computed(() => {
             text-v_light_gray
             shadow-none
           `,
+
+          paginationButton: `w-[2rem] !h-7 rounded-md`,
+
+          submit: `w-[12rem] h-[3rem] `,
+
+          closeButton: `!h-10 bg-white border-2 border-v_medium_gray px-3`,
+
+          confirmButton: `!h-10 px-3`,
         },
       },
     }

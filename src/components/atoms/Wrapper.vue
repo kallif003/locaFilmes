@@ -72,6 +72,68 @@ const wrapper_class = computed(() => {
 					items-center 
 					justify-center
 					modalContainer`,
+
+        menuIcon: `
+					h-auto
+					flex
+					flex-col
+					items-center
+					justify-between
+					py-5`,
+
+        dataTable: `
+					min-h-[30rem]
+					w-full
+					glass-effect
+					rounded-lg
+					relative
+				`,
+
+        header: `
+					flex 
+					items-center 
+					w-full 
+					justify-between 
+					mb-8
+				`,
+
+        actionsModal: `
+					bg-white 
+					flex 
+					flex-col 
+					py-5
+					px-5
+					min-h-[13rem] 
+					w-[40rem] 
+					text-black 
+					rounded-md
+				`,
+
+        notification: `
+					bg-white
+					flex 
+					flex-col 
+					justify-center
+					items-center
+					py-5
+					px-8
+					h-[17rem] 
+					text-black 
+					rounded-md
+				`,
+
+        deleteModal: `
+					bg-white
+					flex 
+					flex-col 
+					justify-center 
+					items-center 
+					h-[10rem] 
+					min-w-[30rem] 
+					text-black 
+					rounded-md
+					px-8
+				`,
       },
     },
   })({
@@ -87,5 +149,13 @@ const wrapper_class = computed(() => {
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(13.5px);
   border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.modalContainer {
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.5);
+  animation: fadeInAnimation ease 0.3s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
 }
 </style>

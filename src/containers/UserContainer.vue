@@ -1,0 +1,366 @@
+<template>
+  <Loading v-if="showLoading" />
+
+  <Notification
+    :title="title"
+    :subTitle="subTitle"
+    @closeModal="closeNotificationModal"
+    v-if="showNotificationModal"
+  />
+
+  <ActionModal
+    v-if="showDeleteModal"
+    :closeDeleteModal="() => (showDeleteModal = false)"
+    :confirm-action="deleteUsers"
+    title="Confirmar exclusão"
+    sub-title="Tem certeza que deseja excluir esse usuário?"
+  />
+
+  <WrapperModal
+    v-if="showUserModal"
+    :closeModalOutside="() => (showUserModal = false)"
+  >
+    <UserModal
+      :type-action="typeAction"
+      :inputWrappingStyle="inputWrappingStyle"
+      :createOrUpdateUser="createOrUpdateUser"
+      :validateDataToCreateUser="validateDataToCreateUser"
+      :validateDataToUpdateUser="validateDataToUpdateUser"
+    >
+      <ModalActionButtons
+        :type-action="typeAction"
+        :show-button="showButton"
+        :closeModal="closeUserModal"
+      />
+    </UserModal>
+  </WrapperModal>
+
+  <Container type="page">
+    <Wrapper type="header">
+      <UserFilter
+        :users="usernames"
+        :departments="nameDepartments"
+        :selectUserByDocNum="selectUserByDepartment"
+        :selectUser="selectUser"
+        :userFilterCleaning="userFilterCleaning"
+      />
+
+      <Button
+        btnType="submit"
+        class="bg-white"
+        @click="openUserModal(Actions.SAVE)"
+      >
+        <p class="text-v_medium_gray">Cadastrar</p>
+      </Button>
+    </Wrapper>
+
+    <UserTable
+      :actions="actions"
+      :content="users"
+      :itemsPerPage="Number(itemsPerPage)"
+      :show-delete-modal="openDeleteModal"
+      :openUserModal="openUserModal"
+    >
+      <template v-slot:emptyTable>
+        <EmptyTable :content="users.length" />
+      </template>
+
+      <template v-slot:header>
+        <TableHead :headers="headers" action="Ajustar" />
+      </template>
+    </UserTable>
+
+    <WrapperPagination :totalPages="totalPages" :itemsPerPage="itemsPerPage">
+      <ItemsPerPage @setItemsPerPage="setItemsPerPage" class="float-left" />
+
+      <Pagination
+        :current-page="page"
+        :pageCount="totalPages.length"
+        :items="totalPages"
+        @paginate="setPagination"
+        class="float-right"
+      />
+    </WrapperPagination>
+  </Container>
+</template>
+
+<script setup lang="ts">
+/* eslint-disable no-useless-escape */
+import ActionModal from "@/components/molecules/ActionModal.vue";
+import Notification from "@/components/molecules/NotificationModal.vue";
+import ModalActionButtons from "@/components/molecules/ModalActionButtons.vue";
+import UserModal from "@/components/organisms/UserModal.vue";
+import WrapperModal from "@/components/molecules/WrapperModal.vue";
+import WrapperPagination from "@/components/molecules/WrapperPagination.vue";
+import Wrapper from "@/components/atoms/Wrapper.vue";
+import Button from "@/components/atoms/Button.vue";
+import UserFilter from "@/components/molecules/UserFilter.vue";
+import Pagination from "@/components/organisms/Pagination.vue";
+import ItemsPerPage from "@/components/molecules/ItemsPerPage.vue";
+import Container from "@/components/atoms/Container.vue";
+import Loading from "@/components/molecules/Loading.vue";
+import { useHead } from "@unhead/vue";
+import UserTable from "@/components/organisms/UserTable.vue";
+import TableHead from "@/components/molecules/TableHead.vue";
+import EmptyTable from "@/components/molecules/EmptyTable.vue";
+import { onMounted, ref } from "vue";
+import {
+  IInputWrappingStyle,
+  IMessage,
+  IUsers,
+  UseForm,
+} from "@/utils/interfaces";
+import { Actions, AuthorizationUser } from "@/utils/enum";
+import { hasPermission, getPermission } from "@/utils/permissions";
+import {
+  createUserApi,
+  deleteUserApi,
+  getAllUsersApi,
+  updateUserApi,
+} from "@/api/user";
+import useProps from "@/context/useProps";
+
+useHead({
+  title: "Aloca Filmes - Usuários",
+});
+
+const headers = ["Id", "Nome", "Email", "Documento", "Status"];
+
+const actions = ["Atualizar", "Deletar"];
+
+const { setTotalPages } = useProps();
+
+let showLoading = ref(false);
+let showDeleteModal = ref(false);
+let showNotificationModal = ref(false);
+let users = ref<IUsers[]>([]);
+let itemsPerPage = ref(10);
+let showUserModal = ref(false);
+let typeAction = ref("Cadastrar");
+let userId = ref<string>("");
+let page = ref(1);
+let totalPages = ref<number[]>([]);
+let showButton = ref(false);
+let permission = ref<string[]>([]);
+let title = ref("");
+let subTitle = ref("");
+
+const inputWrappingStyle = () => {
+  let style: IInputWrappingStyle[] = [
+    {
+      display: "flex",
+      width: "100%",
+      justifyContent: "space-between",
+      marginTop: "0.5rem",
+      position: "relative",
+      flexWrap: "wrap",
+      minHeight: "",
+    },
+  ];
+
+  if (hasPermission([AuthorizationUser.ADMIN])) {
+    style[0].minHeight = "15rem";
+  } else {
+    style[0].minHeight = "8rem";
+  }
+
+  return style[0];
+};
+
+const openUserModal = (action: string, id: string) => {
+  showUserModal.value = true;
+  typeAction.value = action;
+  userId.value = id;
+};
+
+const openDeleteModal = (id: string) => {
+  console.log("id", id);
+
+  userId.value = id;
+  showDeleteModal.value = true;
+};
+
+const closeUserModal = (event: Event) => {
+  event.stopPropagation();
+  showUserModal.value = false;
+};
+
+const closeNotificationModal = () => {
+  showNotificationModal.value = false;
+};
+
+const setPagination = (currentPage: number) => {
+  if (page.value != currentPage) {
+    page.value = currentPage;
+
+    getAllUsers(currentPage, itemsPerPage.value);
+  }
+};
+
+const setItemsPerPage = (value: number) => {
+  if (itemsPerPage.value != value) {
+    itemsPerPage.value = value;
+
+    getAllUsers(page.value, value);
+  }
+};
+
+const handleApiResponse = (message: IMessage) => {
+  title.value = message.title;
+  subTitle.value = message.subTitle;
+};
+
+const changeVariableState = () => {
+  showNotificationModal.value = true;
+  showUserModal.value = false;
+  showButton.value = false;
+  showLoading.value = false;
+};
+
+const validateDataToCreateUser = (userForm: UseForm) => {
+  let validate = [];
+
+  const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(userForm.email!);
+
+  for (const key in userForm) {
+    if (userForm[key as keyof UseForm] != "" && regex) {
+      validate.push(key);
+    }
+  }
+
+  if (validate.length == 4 && hasPermission([AuthorizationUser.ADMIN])) {
+    showButton.value = true;
+  } else {
+    showButton.value = false;
+  }
+};
+
+const validateDataToUpdateUser = (user: UseForm) => {
+  let validate = [];
+  let regex = true;
+
+  for (const key in user) {
+    if (user[key as keyof UseForm] != "" && user[key as keyof UseForm]) {
+      validate.push(key);
+    }
+  }
+
+  if (user.email != "") {
+    regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(user.email!);
+  }
+
+  if (validate.length > 0 && regex) showButton.value = true;
+  else if (!regex) showButton.value = false;
+  else showButton.value = false;
+};
+
+const createOrUpdateUser = (user: UseForm, action: string) => {
+  showLoading.value = true;
+
+  if (action == Actions.SAVE) {
+    createUsers(user);
+  } else {
+    updateUsers(user);
+  }
+};
+
+const createUsers = async (user: UseForm) => {
+  showLoading.value = true;
+
+  const res: any = await createUserApi(user, permission.value);
+
+  if (res?.status == 201) {
+    getAllUsers(page.value, itemsPerPage.value);
+
+    handleApiResponse(res?.data.message);
+  } else {
+    handleApiResponse(res?.response.data.message);
+  }
+
+  changeVariableState();
+};
+
+const updateUsers = async (user: UseForm) => {
+  showLoading.value = true;
+
+  const res: any = await updateUserApi(user, userId.value);
+
+  console.log("res", res);
+
+  if (res?.status == 200) {
+    getAllUsers(page.value, itemsPerPage.value);
+
+    handleApiResponse(res?.data.message);
+  } else {
+    handleApiResponse(res?.response.data.message);
+  }
+
+  changeVariableState();
+};
+
+const deleteUsers = async () => {
+  showLoading.value = true;
+
+  showDeleteModal.value = false;
+
+  const res: any = await deleteUserApi(userId.value);
+
+  if (res?.status == 200) {
+    getAllUsers(page.value, itemsPerPage.value);
+
+    handleApiResponse(res?.data.message);
+  } else {
+    handleApiResponse(res?.response.data.message);
+  }
+
+  changeVariableState();
+};
+
+const getAllUsers = async (currentPage: number, itemsPerPage: number) => {
+  showLoading.value = true;
+
+  const res: any = await getAllUsersApi(
+    currentPage,
+    itemsPerPage,
+    permission.value
+  );
+
+  console.log("res", res);
+
+  if (res.status == 200) {
+    users.value = parseUser(res.data.users);
+
+    totalPages.value = setTotalPages(res.data.totalPages);
+
+    console.log("t", totalPages.value);
+  } else if (res?.response.status == 404) {
+    users.value = [];
+
+    totalPages.value = [];
+  } else {
+    handleApiResponse(res?.response?.data?.message);
+
+    showNotificationModal.value = true;
+  }
+
+  showLoading.value = false;
+};
+
+const parseUser = (data: any[]) => {
+  const users = data.map((user) => ({
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    status: user.deleted ? "Inativo" : "Ativo",
+    docNum: user.docNum,
+  }));
+
+  return users;
+};
+
+onMounted(() => {
+  permission.value = getPermission();
+
+  getAllUsers(page.value, itemsPerPage.value);
+});
+</script>

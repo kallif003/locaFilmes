@@ -1,7 +1,7 @@
 <template>
   <Wrapper type="acessArea">
     <Wrapper type="textArea">
-      <h1 class="text-[2rem]">Lóca Filmes</h1>
+      <h1 class="text-[2rem]">Aloca Filmes</h1>
       <p>Após o login você terá acesso as funcionalidades</p>
     </Wrapper>
 
@@ -54,7 +54,7 @@
         Entrar
       </Button>
 
-      <Button btn-type="showPassword" @click.prevent="showPassord">
+      <Button btnType="showPassword" @click.prevent="showPassord">
         <v-icon :icon="eyeIcon ? 'mdi-eye-outline' : 'mdi-eye-off-outline'" />
       </Button>
     </form>

@@ -27,6 +27,8 @@ module.exports = {
           "Wrapper",
           "Login",
           "Loading",
+          "Pagination",
+          "Select",
         ],
       },
     ],

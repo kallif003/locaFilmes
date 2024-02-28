@@ -29,7 +29,10 @@ const input_class = computed(() => {
 	 input`,
     {
       variants: {
-        intent: { login: "px-2 py-2 w-full" },
+        intent: {
+          login: "px-2 py-2 w-full",
+          input: `w-[18rem] h-[3rem] px-4 inputLogin`,
+        },
       },
     }
   )({
