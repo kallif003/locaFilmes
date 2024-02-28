@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8080
 
 # Comando para iniciar a aplicação Vue
-CMD ["npm", "run", "serve"]
+CMD ["npm", "run", "serve", "dev"]

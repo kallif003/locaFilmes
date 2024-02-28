@@ -26,11 +26,10 @@ const input_class = computed(() => {
 	 rounded-md
 	 shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)]
 	 outline-[#e1e4ed]
-	 bg-gray-100
 	 input`,
     {
       variants: {
-        intent: { login: "" },
+        intent: { login: "px-2 py-2 w-full" },
       },
     }
   )({
@@ -67,8 +66,8 @@ const handleInput = (event: Event) => {
 }
 
 .input:focus {
-  background: #fff;
-  outline: 2px solid #36802d;
+  background: transparent;
+  outline: 1px solid #ffd700;
 }
 
 input {

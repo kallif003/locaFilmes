@@ -3,6 +3,14 @@ module.exports = {
   content: ["./src/views/**/*.vue", "./src/components/**/*.{vue,ts}"],
   theme: {
     extend: {
+      colors: {
+        v_red: "#8B0000",
+        v_gold: "#FFD700",
+        v_gray: "#242424",
+        v_light_gray: "#9D9797",
+        v_medium_gray: "#2E2E2E",
+        v_dark_gray: "#161616",
+      },
       screens: {
         sm: { min: "0px", max: "767px" },
         // => @media (min-width: 200px and max-width: 767px) { ... }

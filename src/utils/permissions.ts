@@ -16,3 +16,7 @@ export const isAuthenticated = (): string => {
 export const removeItems = () => {
   ls.removeAll();
 };
+
+export const setPermission = (permissions: Array<string>) => {
+  return ls.set("user_permissions", JSON.stringify(permissions));
+};

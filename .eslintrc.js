@@ -19,7 +19,15 @@ module.exports = {
     "vue/multi-word-component-names": [
       "error",
       {
-        ignores: ["Painel", "Button", "Container", "Input", "Wrapper"],
+        ignores: [
+          "Painel",
+          "Button",
+          "Container",
+          "Input",
+          "Wrapper",
+          "Login",
+          "Loading",
+        ],
       },
     ],
   },

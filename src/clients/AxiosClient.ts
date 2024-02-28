@@ -26,6 +26,13 @@ export const setBearerAuthorization = (
   client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 };
 
+export const setBasicAuthorization = (
+  client: AxiosInstance,
+  encode: string
+) => {
+  client.defaults.headers.common["Authorization"] = `Basic ${encode}`;
+};
+
 export const movieClient = () => movie_client_api;
 export const cepClient = () => cep_client_api;
 export const backClient = () => restClient;
