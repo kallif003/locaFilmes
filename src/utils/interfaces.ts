@@ -20,6 +20,7 @@ export interface IContainerVariant {
   paginationContainer: string;
   itemsPerPageContainer: string;
   backgroundContainer: string;
+  card: string;
 }
 
 export interface IButtonVariant {
@@ -46,6 +47,8 @@ export interface IWrapperVariant {
   notification: string;
   deleteModal: string;
   filter: string;
+  card: string;
+  backgroundCard: string;
 }
 
 export interface IMessage {
@@ -66,6 +69,7 @@ export interface IUseProps {
   setTableBackground: (index: number) => any;
   setTotalPages: (page: number) => number[];
   handleAutoCompleteStyle: (value: string | undefined | null) => any;
+  inputWrappingStyle: () => IInputWrappingStyle;
 }
 
 export interface IUsers {
@@ -75,6 +79,47 @@ export interface IUsers {
   status: string;
   email: string;
   password?: string;
+}
+
+export interface IClient {
+  id: string;
+  name: string;
+  surname: string;
+  docNum: string;
+  email: string;
+  phone: string;
+  cep: string;
+  street: string;
+  district: string;
+  city: string;
+  state: string;
+  status?: string;
+}
+
+export interface ClientForm {
+  name: string;
+  surname: string;
+  email: string;
+  phone: string;
+  docNum: string;
+  cep: string;
+  street: string;
+  district: string;
+  city: string;
+  state: string;
+  [key: string]: string;
+}
+
+export interface IViaCepApi {
+  bairro: string;
+  cep: string;
+  localidade: string;
+  logradouro: string;
+  uf: string;
+}
+
+export interface IAdress {
+  data: IViaCepApi;
 }
 
 export interface IInputWrappingStyle {

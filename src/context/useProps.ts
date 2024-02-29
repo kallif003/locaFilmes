@@ -1,4 +1,6 @@
-import { IUseProps } from "@/utils/interfaces";
+import { AuthorizationUser } from "@/utils/enum";
+import { IInputWrappingStyle, IUseProps } from "@/utils/interfaces";
+import { hasPermission } from "@/utils/permissions";
 
 const useProps = (): IUseProps => {
   const setTableBackground = (index: number) => {
@@ -27,10 +29,33 @@ const useProps = (): IUseProps => {
     }
   };
 
+  const inputWrappingStyle = () => {
+    const style: IInputWrappingStyle[] = [
+      {
+        display: "flex",
+        width: "100%",
+        justifyContent: "space-between",
+        marginTop: "0.5rem",
+        position: "relative",
+        flexWrap: "wrap",
+        minHeight: "",
+      },
+    ];
+
+    if (hasPermission([AuthorizationUser.ADMIN])) {
+      style[0].minHeight = "15rem";
+    } else {
+      style[0].minHeight = "8rem";
+    }
+
+    return style[0];
+  };
+
   return {
     setTableBackground,
     setTotalPages,
     handleAutoCompleteStyle,
+    inputWrappingStyle,
   };
 };
 

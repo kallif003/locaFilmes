@@ -11,11 +11,19 @@
 import Container from "@/components/atoms/Container.vue";
 import MenuSideBarContainer from "@/containers/MenuSideBarContainer.vue";
 import router from "@/router";
+import { AuthorizationUser } from "@/utils/enum";
+import { hasPermission } from "@/utils/permissions";
 import { onMounted } from "vue";
 
 onMounted(() => {
-  router.push({
-    name: "Usuarios",
-  });
+  if (hasPermission([AuthorizationUser.ADMIN])) {
+    router.push({
+      name: "Usuarios",
+    });
+  } else {
+    router.push({
+      name: "Clientes",
+    });
+  }
 });
 </script>

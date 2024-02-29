@@ -90,13 +90,22 @@ const wrapper_class = computed(() => {
 					relative
 				`,
 
+        card: `
+					min-h-[30rem]
+					min-w-[40%]
+					glass-effect
+					rounded-lg
+					flex
+          flex-wrap
+				`,
+
         header: `
 					flex 
 					items-center 
 					w-full 
-					justify-between 
+        					justify-between 
 					mb-8
-				`,
+          				`,
 
         actionsModal: `
 					bg-white 
@@ -136,7 +145,19 @@ const wrapper_class = computed(() => {
 					px-8
 				`,
 
-        filter: `flex items-end justify-between  w-[42%]`,
+        filter: `flex items-end justify-between  min-w-[42%] sm:flex-col sm:items-start`,
+
+        backgroundCard: `
+            min-w-[10rem]
+            h-[16rem]
+            shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)] 
+            bg-v_white
+            rounded-lg 
+            px-2 
+            py-2 
+            mx-2 
+            my-2
+        `,
       },
     },
   })({

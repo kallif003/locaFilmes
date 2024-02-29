@@ -1,64 +1,66 @@
 <template>
-  <Wrapper type="dataTable">
-    <slot name="emptyTable"></slot>
+  <div class="table-container">
+    <Wrapper type="dataTable">
+      <slot name="emptyTable"></slot>
 
-    <table>
-      <slot name="header"></slot>
+      <table>
+        <slot name="header"></slot>
 
-      <tbody style="height: auto">
-        <tr
-          v-for="(items, index) in content"
-          :key="items.id"
-          class="font-medium"
-        >
-          <td :style="setTableBackground(index)">
-            {{ items.id }}
-          </td>
+        <tbody style="height: auto">
+          <tr
+            v-for="(items, index) in content"
+            :key="items.id"
+            class="font-medium"
+          >
+            <td :style="setTableBackground(index)">
+              {{ items.id }}
+            </td>
 
-          <td :style="setTableBackground(index)">
-            {{ items.name }}
-          </td>
+            <td :style="setTableBackground(index)">
+              {{ items.name }}
+            </td>
 
-          <td :style="setTableBackground(index)">
-            {{ items.email }}
-          </td>
+            <td :style="setTableBackground(index)">
+              {{ items.email }}
+            </td>
 
-          <td :style="setTableBackground(index)">
-            {{ items.docNum }}
-          </td>
+            <td :style="setTableBackground(index)">
+              {{ items.docNum }}
+            </td>
 
-          <td :style="setTableBackground(index)">
-            {{ items.status }}
-          </td>
+            <td :style="setTableBackground(index)">
+              {{ items.status }}
+            </td>
 
-          <td :style="setTableBackground(index)">
-            <v-menu transition="slide-y-transition">
-              <template v-slot:activator="{ props }">
-                <button
-                  v-bind="props"
-                  :disabled="items.status == 'Inativo' ? true : false"
-                >
-                  <v-icon icon="mdi-pencil-box-outline" class="" />
-                </button>
-              </template>
-
-              <v-list>
-                <v-list-item>
-                  <button @click="openUserModal(Actions.UPDATE, items.id)">
-                    Atualizar
+            <td :style="setTableBackground(index)">
+              <v-menu transition="slide-y-transition">
+                <template v-slot:activator="{ props }">
+                  <button
+                    v-bind="props"
+                    :disabled="items.status == 'Inativo' ? true : false"
+                  >
+                    <v-icon icon="mdi-pencil-box-outline" class="" />
                   </button>
-                </v-list-item>
+                </template>
 
-                <v-list-item>
-                  <button @click="showDeleteModal(items.id)">Deletar</button>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </Wrapper>
+                <v-list>
+                  <v-list-item>
+                    <button @click="openUserModal(Actions.UPDATE, items.id)">
+                      Atualizar
+                    </button>
+                  </v-list-item>
+
+                  <v-list-item>
+                    <button @click="showDeleteModal(items.id)">Deletar</button>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </Wrapper>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -91,6 +93,13 @@ defineProps({
 </script>
 
 <style scoped>
+@media (max-width: 767px) {
+  .table-container {
+    width: 40%;
+    overflow-y: auto; /* Adiciona uma barra de rolagem horizontal quando necessário */
+  }
+}
+
 table {
   border-collapse: collapse;
   width: 100%;

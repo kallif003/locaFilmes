@@ -19,12 +19,12 @@ const container_class = computed(() => {
     variants: {
       intent: {
         login: `
-          bg-gradient-to-r from-v_dark_gray via-v_gray to-v_medium_gray 
-          h-screen
-          flex
-          flex-col
-          justify-center
-          items-center
+				bg-gradient-to-r from-v_dark_gray via-v_gray to-v_medium_gray 
+				h-screen
+				flex
+				flex-col
+				justify-center
+				items-center
         `,
 
         loadingContainer: `
@@ -39,10 +39,10 @@ const container_class = computed(() => {
 					left-0`,
 
         painelContainer: `
-					grid
+				 	grid
 					grid-cols-[5%,1fr]
 					min-h-screen
-max-h-full
+					max-h-full
 					bg-v_ligth_gray
 					
 					`,
@@ -86,6 +86,13 @@ max-h-full
 					fixed 
 					top-0 
 					left-0`,
+
+        card: `
+			min-h-[30rem] 
+			min-w-[40%] 
+			flex 
+			flex-wrap
+		`,
       },
     },
   })({

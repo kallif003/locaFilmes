@@ -16,31 +16,23 @@
 
 <script setup lang="ts">
 /* eslint-disable no-undef */
-import { PropType, computed } from "vue";
-import { useRoute } from "vue-router";
+import { PropType } from "vue";
 
-const route = useRoute();
 defineProps({
   headers: { type: Array as PropType<string[]>, required: true },
 
   action: { type: String, required: true },
 });
-
-const tableHeaderAlignment = computed(() => {
-  if (route.path === "/Painel/Coletas") {
-    return "center";
-  } else {
-    return "start";
-  }
-});
 </script>
 
 <style scoped>
-th {
+th,
+td {
+  width: 1%;
   background-color: #2e2e2e;
   color: #fff;
   height: 3rem;
-  text-align: v-bind(tableHeaderAlignment);
+  text-align: start;
   padding: 0 2em;
 }
 </style>

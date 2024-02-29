@@ -1,41 +1,41 @@
 <template>
-  <Loading v-if="showLoading" />
-
-  <Notification
-    :title="title"
-    :subTitle="subTitle"
-    @closeModal="closeNotificationModal"
-    v-if="showNotificationModal"
-  />
-
-  <ActionModal
-    v-if="showDeleteModal"
-    :closeDeleteModal="() => (showDeleteModal = false)"
-    :confirm-action="deleteUsers"
-    title="Confirmar exclusão"
-    sub-title="Tem certeza que deseja excluir esse usuário?"
-  />
-
-  <WrapperModal
-    v-if="showUserModal"
-    :closeModalOutside="() => (showUserModal = false)"
-  >
-    <UserModal
-      :type-action="typeAction"
-      :inputWrappingStyle="inputWrappingStyle"
-      :createOrUpdateUser="createOrUpdateUser"
-      :validateDataToCreateUser="validateDataToCreateUser"
-      :validateDataToUpdateUser="validateDataToUpdateUser"
-    >
-      <ModalActionButtons
-        :type-action="typeAction"
-        :show-button="showButton"
-        :closeModal="closeUserModal"
-      />
-    </UserModal>
-  </WrapperModal>
-
   <Container type="page">
+    <Loading v-if="showLoading" />
+
+    <Notification
+      :title="title"
+      :subTitle="subTitle"
+      @closeModal="closeNotificationModal"
+      v-if="showNotificationModal"
+    />
+
+    <ActionModal
+      v-if="showDeleteModal"
+      :closeDeleteModal="() => (showDeleteModal = false)"
+      :confirm-action="deleteUsers"
+      title="Confirmar exclusão"
+      sub-title="Tem certeza que deseja excluir esse usuário?"
+    />
+
+    <WrapperModal
+      v-if="showUserModal"
+      :closeModalOutside="() => (showUserModal = false)"
+    >
+      <UserModal
+        :type-action="typeAction"
+        :inputWrappingStyle="inputWrappingStyle"
+        :createOrUpdateUser="createOrUpdateUser"
+        :validateDataToCreateUser="validateDataToCreateUser"
+        :validateDataToUpdateUser="validateDataToUpdateUser"
+      >
+        <ModalActionButtons
+          :type-action="typeAction"
+          :show-button="showButton"
+          :closeModal="closeUserModal"
+        />
+      </UserModal>
+    </WrapperModal>
+
     <Wrapper type="header">
       <Wrapper type="filter">
         <UserFilter
@@ -46,7 +46,7 @@
           :userFilterCleaning="userFilterCleaning"
         />
 
-        <button @click="userFilterCleaning" v-if="userSelected">
+        <button @click="userFilterCleaning" v-if="userSelected" class="mt-2">
           Limpar<v-icon icon="mdi-close" />
         </button>
       </Wrapper>
@@ -110,12 +110,7 @@ import UserTable from "@/components/organisms/UserTable.vue";
 import TableHead from "@/components/molecules/TableHead.vue";
 import EmptyTable from "@/components/molecules/EmptyTable.vue";
 import { onMounted, ref } from "vue";
-import {
-  IInputWrappingStyle,
-  IMessage,
-  IUsers,
-  UseForm,
-} from "@/utils/interfaces";
+import { IMessage, IUsers, UseForm } from "@/utils/interfaces";
 import { Actions, AuthorizationUser } from "@/utils/enum";
 import { hasPermission, getPermission } from "@/utils/permissions";
 import {
@@ -137,7 +132,7 @@ const headers = ["Id", "Nome", "Email", "Documento", "Status"];
 
 const actions = ["Atualizar", "Deletar"];
 
-const { setTotalPages } = useProps();
+const { setTotalPages, inputWrappingStyle } = useProps();
 
 let showLoading = ref(false);
 let showDeleteModal = ref(false);
@@ -156,28 +151,6 @@ let subTitle = ref("");
 let usernames = ref<string[]>([]);
 let docNum = ref<string[]>([]);
 let userSelected = ref(false);
-
-const inputWrappingStyle = () => {
-  let style: IInputWrappingStyle[] = [
-    {
-      display: "flex",
-      width: "100%",
-      justifyContent: "space-between",
-      marginTop: "0.5rem",
-      position: "relative",
-      flexWrap: "wrap",
-      minHeight: "",
-    },
-  ];
-
-  if (hasPermission([AuthorizationUser.ADMIN])) {
-    style[0].minHeight = "15rem";
-  } else {
-    style[0].minHeight = "8rem";
-  }
-
-  return style[0];
-};
 
 const openUserModal = (action: string, id: string) => {
   showUserModal.value = true;
@@ -382,15 +355,11 @@ const selectUserByDocNum = async (docNum: string) => {
       users.value = parseUser(res?.data);
     }
 
-    console.log("res", res);
-
     userSelected.value = true;
   }
 };
 
 const selectUser = async (name: string) => {
-  console.log("oi", name);
-
   if (name != "") {
     users.value = [];
 
@@ -399,8 +368,6 @@ const selectUser = async (name: string) => {
     if (res?.status == 200) {
       users.value = parseUser(res?.data);
     }
-
-    console.log("res", res);
 
     userSelected.value = true;
   }
@@ -412,8 +379,6 @@ const getAllNames = async () => {
   if (res?.status == 200) {
     usernames.value = res?.data;
   }
-
-  console.log("user", usernames.value);
 };
 
 const getAllDocNumbers = async () => {
@@ -427,10 +392,10 @@ const getAllDocNumbers = async () => {
 onMounted(async () => {
   permission.value = getPermission();
 
-  await getAllUsers(page.value, itemsPerPage.value);
-
-  await getAllNames();
-
-  await getAllDocNumbers();
+  await Promise.all([
+    getAllUsers(page.value, itemsPerPage.value),
+    getAllNames(),
+    getAllDocNumbers(),
+  ]);
 });
 </script>

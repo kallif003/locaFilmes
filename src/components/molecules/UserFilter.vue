@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-between items-center space-x-5">
+  <div class="flex justify-between items-center sm:flex-col w-[80%] sm:w-[40%]">
     <div>
       <h1>Buscar por Usuário:</h1>
       <Select
@@ -13,9 +13,7 @@
       </Select>
     </div>
 
-    <h1 class="mt-7">ou</h1>
-
-    <div>
+    <div class="sm:mt-2">
       <h1>Buscar por Documento:</h1>
       <Select
         type="filter"
@@ -33,10 +31,7 @@
 <script setup lang="ts">
 /* eslint-disable no-undef */
 import Select from "../atoms/Select.vue";
-import useProps from "@/context/useProps";
 import { PropType, ref } from "vue";
-
-const { handleAutoCompleteStyle } = useProps();
 
 let usersSelected = ref("");
 let docNumSelected = ref("");
@@ -52,11 +47,6 @@ let props = defineProps({
     required: true,
   },
 
-  userFilterCleaning: {
-    type: Function as PropType<() => void>,
-    required: true,
-  },
-
   users: { type: Array as PropType<string[]>, required: true },
 
   docNum: { type: Array as PropType<any[]>, required: true },
@@ -69,12 +59,7 @@ const selectUserByDocNum = (docNum: string) => {
 
 const selectUser = (username: string) => {
   props.selectUser(username);
-  docNumSelected.value = "";
-};
 
-const userFilterCleaning = () => {
-  props.userFilterCleaning();
-  usersSelected.value = "";
   docNumSelected.value = "";
 };
 </script>

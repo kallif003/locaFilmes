@@ -87,8 +87,6 @@ export const getUsersByNameOrDocNumApi = async (
       data
     );
 
-    console.log("d", res);
-
     return res;
   } catch (error) {
     return error;
