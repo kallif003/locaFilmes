@@ -55,7 +55,8 @@ const wrapper_class = computed(() => {
           justify-center 
           absolute 
           z-10 
-          top-[7.5rem]
+          top-[4.5rem]
+          xl:top-[7.5rem]
           px-8
         `,
 
@@ -134,6 +135,8 @@ const wrapper_class = computed(() => {
 					rounded-md
 					px-8
 				`,
+
+        filter: `flex items-end justify-between  w-[42%]`,
       },
     },
   })({

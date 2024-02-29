@@ -45,6 +45,7 @@ export interface IWrapperVariant {
   actionsModal: string;
   notification: string;
   deleteModal: string;
+  filter: string;
 }
 
 export interface IMessage {

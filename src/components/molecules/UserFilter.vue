@@ -1,51 +1,45 @@
 <template>
-  <div
-    class="flex justify-between items-center space-x-5"
-    :style="
-      hasPermission([AuthorizationUser.ADMIN]) ? 'width: 43rem' : 'width: 25rem'
-    "
-  >
-    <v-autocomplete
-      v-model="usersSelected"
-      :active="true"
-      :style="handleAutoCompleteStyle(usersSelected)"
-      clearable
-      :on-click:clear="userFilterCleaning"
-      :onUpdate:modelValue="selectUser"
-      :items="users"
-      chips
-      label="Buscar Usuário"
-    ></v-autocomplete>
+  <div class="flex justify-between items-center space-x-5">
+    <div>
+      <h1>Buscar por Usuário:</h1>
+      <Select
+        type="filter"
+        v-model="usersSelected"
+        @click="selectUser(usersSelected)"
+      >
+        <option v-for="(item, index) in users" :value="item" :key="index">
+          {{ item }}
+        </option>
+      </Select>
+    </div>
 
-    <h1 class="mt-7" v-if="hasPermission([AuthorizationUser.ADMIN])">ou</h1>
+    <h1 class="mt-7">ou</h1>
 
-    <v-autocomplete
-      v-if="hasPermission([AuthorizationUser.ADMIN])"
-      clearable
-      :active="true"
-      :style="handleAutoCompleteStyle(docNumSelected)"
-      :on-click:clear="userFilterCleaning"
-      v-model="docNumSelected"
-      :onUpdate:modelValue="selectUserByDocNum"
-      :items="docNum"
-      chips
-      label="Buscar por documento"
-    >
-    </v-autocomplete>
+    <div>
+      <h1>Buscar por Documento:</h1>
+      <Select
+        type="filter"
+        v-model="docNumSelected"
+        @click="selectUserByDocNum(docNumSelected)"
+      >
+        <option v-for="(item, index) in docNum" :value="item" :key="index">
+          {{ item }}
+        </option>
+      </Select>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 /* eslint-disable no-undef */
-import { hasPermission } from "@/utils/permissions";
-import { AuthorizationUser } from "@/utils/enum";
+import Select from "../atoms/Select.vue";
 import useProps from "@/context/useProps";
 import { PropType, ref } from "vue";
 
 const { handleAutoCompleteStyle } = useProps();
 
-let usersSelected = ref(null);
-let docNumSelected = ref(null);
+let usersSelected = ref("");
+let docNumSelected = ref("");
 
 let props = defineProps({
   selectUserByDocNum: {
@@ -70,17 +64,17 @@ let props = defineProps({
 
 const selectUserByDocNum = (docNum: string) => {
   props.selectUserByDocNum(docNum);
-  usersSelected.value = null;
+  usersSelected.value = "";
 };
 
 const selectUser = (username: string) => {
   props.selectUser(username);
-  docNumSelected.value = null;
+  docNumSelected.value = "";
 };
 
 const userFilterCleaning = () => {
   props.userFilterCleaning();
-  usersSelected.value = null;
-  docNumSelected.value = null;
+  usersSelected.value = "";
+  docNumSelected.value = "";
 };
 </script>

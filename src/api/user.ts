@@ -40,6 +40,61 @@ export const getAllUsersApi = async (
   }
 };
 
+export const gettAllNamesApi = async (permissions: string[]) => {
+  try {
+    const data = {
+      permissions,
+    };
+
+    const res = await backClient().post(Routes.GET_ALL_NAMES, data);
+
+    console.log("names", res);
+
+    return res;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const gettAllDocNumbersApi = async (permissions: string[]) => {
+  try {
+    const data = {
+      permissions,
+    };
+
+    const res = await backClient().post(Routes.GET_ALL_DOCNUMBERS, data);
+
+    console.log("d", res);
+
+    return res;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getUsersByNameOrDocNumApi = async (
+  name: string | null,
+  docNum: string | null
+) => {
+  try {
+    const data = {
+      name,
+      docNum,
+    };
+
+    const res = await backClient().post(
+      Routes.GET_USER_BY_NAME_OR_DOCNUM,
+      data
+    );
+
+    console.log("d", res);
+
+    return res;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const updateUserApi = async (user: UseForm, id: string) => {
   try {
     const data: Partial<UseForm> = {};

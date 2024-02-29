@@ -37,18 +37,24 @@
 
   <Container type="page">
     <Wrapper type="header">
-      <UserFilter
-        :users="usernames"
-        :departments="nameDepartments"
-        :selectUserByDocNum="selectUserByDepartment"
-        :selectUser="selectUser"
-        :userFilterCleaning="userFilterCleaning"
-      />
+      <Wrapper type="filter">
+        <UserFilter
+          :users="usernames"
+          :docNum="docNum"
+          :selectUserByDocNum="selectUserByDocNum"
+          :selectUser="selectUser"
+          :userFilterCleaning="userFilterCleaning"
+        />
+
+        <button @click="userFilterCleaning" v-if="userSelected">
+          Limpar<v-icon icon="mdi-close" />
+        </button>
+      </Wrapper>
 
       <Button
         btnType="submit"
         class="bg-white"
-        @click="openUserModal(Actions.SAVE)"
+        @click="openUserModal(Actions.SAVE, '')"
       >
         <p class="text-v_medium_gray">Cadastrar</p>
       </Button>
@@ -116,6 +122,9 @@ import {
   createUserApi,
   deleteUserApi,
   getAllUsersApi,
+  getUsersByNameOrDocNumApi,
+  gettAllDocNumbersApi,
+  gettAllNamesApi,
   updateUserApi,
 } from "@/api/user";
 import useProps from "@/context/useProps";
@@ -144,6 +153,9 @@ let showButton = ref(false);
 let permission = ref<string[]>([]);
 let title = ref("");
 let subTitle = ref("");
+let usernames = ref<string[]>([]);
+let docNum = ref<string[]>([]);
+let userSelected = ref(false);
 
 const inputWrappingStyle = () => {
   let style: IInputWrappingStyle[] = [
@@ -174,8 +186,6 @@ const openUserModal = (action: string, id: string) => {
 };
 
 const openDeleteModal = (id: string) => {
-  console.log("id", id);
-
   userId.value = id;
   showDeleteModal.value = true;
 };
@@ -187,6 +197,16 @@ const closeUserModal = (event: Event) => {
 
 const closeNotificationModal = () => {
   showNotificationModal.value = false;
+};
+
+const userFilterCleaning = async () => {
+  if (userSelected.value) {
+    users.value = [];
+
+    getAllUsers(page.value, itemsPerPage.value);
+
+    userSelected.value = false;
+  }
 };
 
 const setPagination = (currentPage: number) => {
@@ -285,8 +305,6 @@ const updateUsers = async (user: UseForm) => {
 
   const res: any = await updateUserApi(user, userId.value);
 
-  console.log("res", res);
-
   if (res?.status == 200) {
     getAllUsers(page.value, itemsPerPage.value);
 
@@ -325,14 +343,10 @@ const getAllUsers = async (currentPage: number, itemsPerPage: number) => {
     permission.value
   );
 
-  console.log("res", res);
-
   if (res.status == 200) {
     users.value = parseUser(res.data.users);
 
     totalPages.value = setTotalPages(res.data.totalPages);
-
-    console.log("t", totalPages.value);
   } else if (res?.response.status == 404) {
     users.value = [];
 
@@ -358,9 +372,65 @@ const parseUser = (data: any[]) => {
   return users;
 };
 
-onMounted(() => {
+const selectUserByDocNum = async (docNum: string) => {
+  if (docNum != "") {
+    users.value = [];
+
+    const res: any = await getUsersByNameOrDocNumApi(null, docNum);
+
+    if (res?.status == 200) {
+      users.value = parseUser(res?.data);
+    }
+
+    console.log("res", res);
+
+    userSelected.value = true;
+  }
+};
+
+const selectUser = async (name: string) => {
+  console.log("oi", name);
+
+  if (name != "") {
+    users.value = [];
+
+    const res: any = await getUsersByNameOrDocNumApi(name, null);
+
+    if (res?.status == 200) {
+      users.value = parseUser(res?.data);
+    }
+
+    console.log("res", res);
+
+    userSelected.value = true;
+  }
+};
+
+const getAllNames = async () => {
+  const res: any = await gettAllNamesApi(permission.value);
+
+  if (res?.status == 200) {
+    usernames.value = res?.data;
+  }
+
+  console.log("user", usernames.value);
+};
+
+const getAllDocNumbers = async () => {
+  const res: any = await gettAllDocNumbersApi(permission.value);
+
+  if (res?.status == 200) {
+    docNum.value = res?.data;
+  }
+};
+
+onMounted(async () => {
   permission.value = getPermission();
 
-  getAllUsers(page.value, itemsPerPage.value);
+  await getAllUsers(page.value, itemsPerPage.value);
+
+  await getAllNames();
+
+  await getAllDocNumbers();
 });
 </script>

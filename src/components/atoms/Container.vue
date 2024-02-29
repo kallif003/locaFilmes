@@ -42,8 +42,9 @@ const container_class = computed(() => {
 					grid
 					grid-cols-[5%,1fr]
 					min-h-screen
-					max-h-full
+max-h-full
 					bg-v_ligth_gray
+					
 					`,
 
         menuContainer: `

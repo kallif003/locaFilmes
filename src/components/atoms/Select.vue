@@ -16,21 +16,29 @@ const props = defineProps({
 });
 
 const selectClass = computed(() => {
-  return cva("", {
-    variants: {
-      intent: {
-        itemsPerPage: `
+  return cva(
+    `	rounded-md 
+			font-[700]
+			text-center
+			shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)]`,
+    {
+      variants: {
+        intent: {
+          itemsPerPage: `
 					w-[4rem]
 					h-[2rem]
 					bg-white
-					rounded-md 
-					font-[700]
-					text-center
-					shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)]
+				
 		  `,
+          filter: `
+          w-[12rem]
+          h-[2rem]
+          
+        `,
+        },
       },
-    },
-  })({
+    }
+  )({
     intent: props.type as any,
   });
 });
