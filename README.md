@@ -1,5 +1,3 @@
-# loca_filmes
-
 ## Project setup
 ```
 yarn install
@@ -7,23 +5,13 @@ yarn install
 
 ### Compiles and hot-reloads for development
 ```
-yarn serve
+Docker: docker build -t nome-da-sua-imagem .
+docker run -p 8080:8080 nome-da-sua-imagem
+ ou
+yarn dev
 ```
 
-### Compiles and minifies for production
+### Config env
 ```
-yarn build
+Configure o env conforme o env example
 ```
-
-### Run your unit tests
-```
-yarn test:unit
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
