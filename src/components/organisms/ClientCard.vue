@@ -6,6 +6,7 @@
       v-for="(items, index) in content"
       :key="index"
       type="backgroundCard"
+      class="h-[16rem]"
     >
       <div class="text-sm px-5">
         <p class="font-extrabold">

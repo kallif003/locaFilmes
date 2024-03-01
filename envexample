@@ -1,4 +1,4 @@
-VUE_APP_API_MOVIE=https://www.omdbapi.com/
+VUE_APP_API_MOVIE=https://api.themoviedb.org/3/
 VUE_APP_API_CEP=https://viacep.com.br/ws/01001000/json
 VUE_APP_SECRET_KEY=kaij29jdj03apkllx
 VUE_APP_BACK=http://localhost:3000

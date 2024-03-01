@@ -1,43 +1,43 @@
 <template>
-  <Loading v-if="showLoading" />
-
-  <Notification
-    :title="title"
-    :subTitle="subTitle"
-    @closeModal="closeNotificationModal"
-    v-if="showNotificationModal"
-  />
-
-  <ActionModal
-    v-if="showDeleteModal"
-    :closeDeleteModal="() => (showDeleteModal = false)"
-    :confirm-action="deleteClient"
-    title="Confirmar exclusão"
-    sub-title="Tem certeza que deseja excluir esse cliente?"
-  />
-
-  <WrapperModal
-    v-if="showUserModal"
-    :closeModalOutside="() => (showUserModal = false)"
-  >
-    <ClientModal
-      :type-action="typeAction"
-      :client="client"
-      :maskZipCode="maskZipCode"
-      :handleClient="handleClient"
-      :validateZipCode="validateZipCode"
-      :inputWrappingStyle="inputWrappingStyle"
-      :createOrUpdateClient="createOrUpdateUser"
-    >
-      <ModalActionButtons
-        :type-action="typeAction"
-        :show-button="showButton"
-        :closeModal="closeUserModal"
-      />
-    </ClientModal>
-  </WrapperModal>
-
   <Container type="page">
+    <Loading v-if="showLoading" />
+
+    <Notification
+      :title="title"
+      :subTitle="subTitle"
+      @closeModal="closeNotificationModal"
+      v-if="showNotificationModal"
+    />
+
+    <ActionModal
+      v-if="showDeleteModal"
+      :closeDeleteModal="() => (showDeleteModal = false)"
+      :confirm-action="deleteClient"
+      title="Confirmar exclusão"
+      sub-title="Tem certeza que deseja excluir esse cliente?"
+    />
+
+    <WrapperModal
+      v-if="showClientModal"
+      :closeModalOutside="() => (showClientModal = false)"
+    >
+      <ClientModal
+        :type-action="typeAction"
+        :client="client"
+        :maskZipCode="maskZipCode"
+        :handleClient="handleClient"
+        :validateZipCode="validateZipCode"
+        :inputWrappingStyle="inputWrappingStyle"
+        :createOrUpdateClient="createOrUpdateUser"
+      >
+        <ModalActionButtons
+          :type-action="typeAction"
+          :show-button="showButton"
+          :closeModal="closeClientModal"
+        />
+      </ClientModal>
+    </WrapperModal>
+
     <Wrapper type="header">
       <Wrapper type="filter">
         <ClientFilter
@@ -56,7 +56,7 @@
       <Button
         btnType="submit"
         class="bg-white"
-        @click="openUserModal(Actions.SAVE, '')"
+        @click="openClientModal(Actions.SAVE, '')"
       >
         <p class="text-v_medium_gray">Cadastrar</p>
       </Button>
@@ -67,7 +67,7 @@
       :content="clients"
       :itemsPerPage="Number(itemsPerPage)"
       :show-delete-modal="openDeleteModal"
-      :openUserModal="openUserModal"
+      :openUserModal="openClientModal"
     >
       <EmptyTable :content="clients.length" />
     </ClientCard>
@@ -123,7 +123,7 @@ useHead({
   title: "Aloca Filmes - Clientes",
 });
 
-const { inputWrappingStyle, setTotalPages } = useProps();
+const { inputWrappingStyle, setTotalPages, maskZipCode } = useProps();
 
 const actions = ["Atualizar", "Deletar"];
 
@@ -131,7 +131,7 @@ let showLoading = ref(false);
 let showDeleteModal = ref(false);
 let showNotificationModal = ref(false);
 let itemsPerPage = ref(10);
-let showUserModal = ref(false);
+let showClientModal = ref(false);
 let typeAction = ref("Cadastrar");
 let page = ref(1);
 let totalPages = ref<number[]>([]);
@@ -159,6 +159,8 @@ let client = ref<ClientForm>({
 });
 
 watch(client.value, () => {
+  console.log("aqui");
+
   if (typeAction.value == Actions.SAVE) {
     validateDataToCreateClient(client.value);
   } else {
@@ -169,25 +171,26 @@ watch(client.value, () => {
 const setPagination = (currentPage: number) => {
   if (page.value != currentPage) {
     page.value = currentPage;
+
+    getAllClients(page.value, itemsPerPage.value);
+  }
+};
+
+const setItemsPerPage = (value: number) => {
+  if (itemsPerPage.value != value) {
+    itemsPerPage.value = value;
+
+    getAllClients(page.value, itemsPerPage.value);
   }
 };
 
 const handleClient = (value: string, key: string) => {
   client.value[key] = value;
-};
 
-function maskZipCode(zipCode: string) {
-  zipCode = zipCode.replace(/\D/g, "");
-  zipCode = zipCode.replace(/(\d{3})(\d)/, "$1.$2");
-  zipCode = zipCode.replace(/(\d{3})(\d)/, "$1.$2");
-  zipCode = zipCode.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-
-  return zipCode;
-}
-
-const setItemsPerPage = (value: number) => {
-  if (itemsPerPage.value != value) {
-    itemsPerPage.value = value;
+  if (typeAction.value == Actions.SAVE) {
+    validateDataToCreateClient(client.value);
+  } else {
+    validateDataToUpdateClient(client.value);
   }
 };
 
@@ -195,8 +198,8 @@ const closeNotificationModal = () => {
   showNotificationModal.value = false;
 };
 
-const openUserModal = (action: string, id: string) => {
-  showUserModal.value = true;
+const openClientModal = (action: string, id: string) => {
+  showClientModal.value = true;
   typeAction.value = action;
   clientId.value = id;
 
@@ -219,9 +222,9 @@ const openDeleteModal = (id: string) => {
   showDeleteModal.value = true;
 };
 
-const closeUserModal = (event: Event) => {
+const closeClientModal = (event: Event) => {
   event.stopPropagation();
-  showUserModal.value = false;
+  showClientModal.value = false;
 };
 
 const clientFilterCleaning = async () => {
@@ -239,7 +242,7 @@ const handleApiResponse = (message: IMessage) => {
 
 const changeVariableState = () => {
   showNotificationModal.value = true;
-  showUserModal.value = false;
+  showClientModal.value = false;
   showButton.value = false;
   showLoading.value = false;
 };
@@ -346,11 +349,11 @@ const getAllClients = async (currentPage: number, itemsPerPage: number) => {
 
   const res: any = await getAllClientsApi(currentPage, itemsPerPage);
 
-  if (res.status == 200) {
+  if (res?.status == 200) {
     clients.value = parserClient(res.data.customer);
 
     totalPages.value = setTotalPages(res.data.totalPages);
-  } else if (res?.response.status == 404) {
+  } else if (res?.status == 404) {
     clients.value = [];
 
     totalPages.value = [];
@@ -364,8 +367,6 @@ const getAllClients = async (currentPage: number, itemsPerPage: number) => {
 };
 
 const parserClient = (data: any[]) => {
-  console.log("res", data);
-
   const clients = data.map((client) => ({
     id: client._id,
     name: client.name,

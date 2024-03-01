@@ -5,13 +5,18 @@
 
 <script setup lang="ts">
 import { isAuthenticated } from "./utils/permissions";
-import { setBearerAuthorization, backClient } from "./clients/AxiosClient";
+import {
+  setBearerAuthorization,
+  backClient,
+  movieClient,
+} from "./clients/AxiosClient";
 
 const token = isAuthenticated();
 
 if (token.length > 0) {
   setBearerAuthorization(backClient(), token);
   setBearerAuthorization(backClient(), token);
+  setBearerAuthorization(movieClient(), process.env.VUE_APP_API_TOKEN);
 }
 </script>
 

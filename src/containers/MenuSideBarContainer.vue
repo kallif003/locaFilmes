@@ -31,17 +31,10 @@ const menuIcons = [
   },
   {
     id: "locations",
-    icon: "mdi-view-list",
-    path: "/Painel/Locacoes",
-    label: "Locações",
-    permissions: [AuthorizationUser.ADMIN, AuthorizationUser.COLLABORATOR],
-  },
-  {
-    id: "movies",
     icon: "mdi-movie-open-edit-outline",
-    path: "/Painel/Filmes",
+    path: "/Painel/Locacoes",
     label: "Filmes",
-    permissions: [AuthorizationUser.ADMIN],
+    permissions: [AuthorizationUser.ADMIN, AuthorizationUser.COLLABORATOR],
   },
 ];
 

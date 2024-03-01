@@ -70,6 +70,7 @@ export interface IUseProps {
   setTotalPages: (page: number) => number[];
   handleAutoCompleteStyle: (value: string | undefined | null) => any;
   inputWrappingStyle: () => IInputWrappingStyle;
+  maskZipCode: (zipCode: string) => string;
 }
 
 export interface IUsers {
@@ -120,6 +121,14 @@ export interface IViaCepApi {
 
 export interface IAdress {
   data: IViaCepApi;
+}
+
+export interface IMovies {
+  poster_path: string;
+  title: string;
+  release_date: string;
+  overview: string;
+  id: number;
 }
 
 export interface IInputWrappingStyle {

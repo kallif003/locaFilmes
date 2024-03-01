@@ -89,7 +89,7 @@ const container_class = computed(() => {
 
         card: `
 			min-h-[30rem] 
-			min-w-[40%] 
+			w-full
 			flex 
 			flex-wrap
 		`,

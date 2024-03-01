@@ -21,6 +21,15 @@ const useProps = (): IUseProps => {
     return totalPages;
   };
 
+  const maskZipCode = (zipCode: string) => {
+    zipCode = zipCode.replace(/\D/g, "");
+    zipCode = zipCode.replace(/(\d{3})(\d)/, "$1.$2");
+    zipCode = zipCode.replace(/(\d{3})(\d)/, "$1.$2");
+    zipCode = zipCode.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+    return zipCode;
+  };
+
   const handleAutoCompleteStyle = (value: string | undefined | null): any => {
     if (value) {
       return { background: "#fff", height: "3.5rem", fontWeight: "bold" };
@@ -56,6 +65,7 @@ const useProps = (): IUseProps => {
     setTotalPages,
     handleAutoCompleteStyle,
     inputWrappingStyle,
+    maskZipCode,
   };
 };
 

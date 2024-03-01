@@ -14,6 +14,8 @@ export enum Routes {
   GET_ALL_CUSTOMER_NAMES = "/api/get_all_customer_names",
   GET_ALL_CUSTOMER_DOCNUMBERS = "/api/get_all_customer_docNumbers",
   GET_CUSTOMER_BY_NAME_OR_DOCNUM_OR_STATUS = "/api/get_customer_by_name_or_docNum_or_status",
+  VALIDATE_RENTAL_PERMISSION = "/api/validade_rental_permission",
+  SAVE_LOCATION = "/api/location/save",
 }
 
 export enum TypeErrors {
@@ -30,4 +32,6 @@ export enum AuthorizationUser {
 export enum Actions {
   SAVE = "Cadastrar",
   UPDATE = "Atualizar",
+  TO_HIRE = "Alugar",
+  GIVE_BACK = "Devolução",
 }

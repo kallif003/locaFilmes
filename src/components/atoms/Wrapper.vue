@@ -103,9 +103,9 @@ const wrapper_class = computed(() => {
 					flex 
 					items-center 
 					w-full 
-        					justify-between 
+          justify-between 
 					mb-8
-          				`,
+        `,
 
         actionsModal: `
 					bg-white 
@@ -145,11 +145,9 @@ const wrapper_class = computed(() => {
 					px-8
 				`,
 
-        filter: `flex items-end justify-between  min-w-[42%] sm:flex-col sm:items-start`,
+        filter: `flex items-end space-x-2 min-w-[42%] sm:flex-col sm:items-start`,
 
         backgroundCard: `
-            min-w-[10rem]
-            h-[16rem]
             shadow-[0_0.3rem_0.62rem_rgba(0,0,0,0.4)] 
             bg-v_white
             rounded-lg 

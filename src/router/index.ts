@@ -6,6 +6,7 @@ import UserContainer from "@/containers/UserContainer.vue";
 import ClientsContainer from "@/containers/ClientsContainer.vue";
 import { hasPermission, isAuthenticated } from "@/utils/permissions";
 import { backClient, setBearerAuthorization } from "@/clients/AxiosClient";
+import FilmLocationContainer from "@/containers/MovieLocationContainer.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -13,7 +14,6 @@ const routes: Array<RouteRecordRaw> = [
     name: "Login",
     component: Login,
   },
-
   {
     path: "/Painel",
     name: "Painel",
@@ -36,6 +36,18 @@ const routes: Array<RouteRecordRaw> = [
         path: "Clientes",
         name: "Clientes",
         component: ClientsContainer,
+        meta: {
+          protected: true,
+          permissions: [
+            AuthorizationUser.ADMIN,
+            AuthorizationUser.COLLABORATOR,
+          ],
+        },
+      },
+      {
+        path: "Locacoes",
+        name: "Locacoes",
+        component: FilmLocationContainer,
         meta: {
           protected: true,
           permissions: [

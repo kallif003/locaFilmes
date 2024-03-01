@@ -131,7 +131,7 @@ const props = defineProps({
   },
 
   handleClient: {
-    type: Function as PropType<(zipCode: string, key: string) => void>,
+    type: Function as PropType<(info: string, key: string) => void>,
     required: true,
   },
 });
