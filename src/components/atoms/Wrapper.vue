@@ -114,7 +114,7 @@ const wrapper_class = computed(() => {
 					py-5
 					px-5
 					min-h-[13rem] 
-					w-[40rem] 
+					w-[60rem] 
 					text-black 
 					rounded-md
 				`,

@@ -7,7 +7,7 @@
         inputType="input"
         :is-disabled="false"
         placeholder="Nome:"
-        :class="client.name !== '' ? ' bg-white mt-2' : 'mt-2'"
+        :class="client.name !== '' ? ' bg-white mt-2 w-[49%]' : 'mt-2 w-[49%]'"
         @keyup="handleClient($event.target.value, 'name')"
       />
 
@@ -15,7 +15,7 @@
         inputType="input"
         :is-disabled="false"
         placeholder="Sobrenome:"
-        :class="client.surname !== '' ? ' bg-white' : ''"
+        :class="client.surname !== '' ? ' bg-white w-[49%]' : 'w-[49%]'"
         @keyup="handleClient($event.target.value, 'surname')"
       />
 
@@ -23,7 +23,7 @@
         inputType="input"
         :is-disabled="false"
         placeholder="Email:"
-        :class="client.email !== '' ? ' bg-white' : ''"
+        :class="client.email !== '' ? ' bg-white w-[49%]' : 'w-[49%]'"
         @keyup="handleClient($event.target.value, 'email')"
       />
 
@@ -31,7 +31,7 @@
         inputType="input"
         :is-disabled="false"
         placeholder="Telefone:"
-        :class="client.phone !== '' ? ' bg-white' : ''"
+        :class="client.phone !== '' ? ' bg-white w-[49%]' : 'w-[49%]'"
         @keyup="handleClient($event.target.value, 'phone')"
       />
 
@@ -41,7 +41,7 @@
         maxlength="14"
         :is-disabled="false"
         placeholder="Cpf:"
-        :class="client.docNum !== '' ? ' bg-white' : ''"
+        :class="client.docNum !== '' ? ' bg-white w-[49%]' : 'w-[49%]'"
         @keyup="handleClient(maskZipCode($event.target.value), 'docNum')"
       />
 
@@ -49,7 +49,7 @@
         inputType="input"
         :is-disabled="false"
         placeholder="Cep:"
-        :class="client.cep !== '' ? ' bg-white' : ''"
+        :class="client.cep !== '' ? ' bg-white w-[49%]' : 'w-[49%]'"
         @keyup="validateZipCode($event.target.value)"
       />
 
@@ -58,7 +58,7 @@
         inputType="input"
         :is-disabled="false"
         placeholder="Rua:"
-        :class="client.street !== '' ? ' bg-white' : ''"
+        :class="client.street !== '' ? ' bg-white w-[49%]' : 'w-[49%]'"
         @keyup="handleClient($event.target.value, 'street')"
       />
 
@@ -67,7 +67,7 @@
         inputType="input"
         :is-disabled="false"
         placeholder="Bairro:"
-        :class="client.district !== '' ? ' bg-white' : ''"
+        :class="client.district !== '' ? ' bg-white w-[49%]' : 'w-[49%]'"
         @keyup="handleClient($event.target.value, 'district')"
       />
 
@@ -76,7 +76,7 @@
         inputType="input"
         :is-disabled="false"
         placeholder="Cidade:"
-        :class="client.city !== '' ? ' bg-white' : ''"
+        :class="client.city !== '' ? ' bg-white w-[49%]' : 'w-[49%]'"
         @keyup="handleClient($event.target.value, 'city')"
       />
 
@@ -85,7 +85,7 @@
         inputType="input"
         :is-disabled="false"
         placeholder="Estado:"
-        :class="client.state !== '' ? ' bg-white' : ''"
+        :class="client.state !== '' ? ' bg-white w-[49%]' : 'w-[49%]'"
         @keyup="handleClient($event.target.value, 'state')"
       />
     </div>

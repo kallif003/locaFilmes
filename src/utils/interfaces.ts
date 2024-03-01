@@ -82,6 +82,31 @@ export interface IUsers {
   password?: string;
 }
 
+export interface ILocation {
+  client: string;
+  movie: string;
+  createdAt: string;
+  date_devolution: string;
+  status: string;
+  id: string;
+}
+
+export interface ILocationFilter {
+  customer: string | null;
+  status: string | null;
+  createdAt: string | null;
+}
+
+export interface ILocationApi {
+  _id: string;
+  movie: string;
+  customer: string;
+  createdAt: string;
+  date_devolution?: string;
+  deleted: string;
+  deletedAt: string;
+}
+
 export interface IClient {
   id: string;
   name: string;

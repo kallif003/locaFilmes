@@ -1,5 +1,6 @@
 import { backClient, movieClient } from "@/clients/AxiosClient";
 import { Routes } from "@/utils/enum";
+import { ILocationFilter } from "@/utils/interfaces";
 
 export const getAllMovies = async (page: number) => {
   try {
@@ -53,6 +54,51 @@ export const createLocationApi = async (
     };
 
     const res = await backClient().post(Routes.SAVE_LOCATION, data);
+
+    return res;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getAllLocationApi = async (page: number) => {
+  try {
+    const data = {
+      page,
+    };
+
+    const res = await backClient().post(Routes.GET_ALL_LOCATION, data);
+
+    return res;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const returnMovieApi = async (id: string) => {
+  try {
+    const res = await backClient().put(`${Routes.RETURN_MOVIE}${id}`);
+
+    return res;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getLocationByFilter = async (location: ILocationFilter) => {
+  try {
+    const data: Partial<ILocationFilter> = {};
+
+    for (const key in location) {
+      if (location[key as keyof ILocationFilter]) {
+        data[key as keyof ILocationFilter] =
+          location[key as keyof ILocationFilter];
+      }
+    }
+
+    console.log("req", data);
+
+    const res = await backClient().post(Routes.GET_LOCATION_BY_FILTER, data);
 
     return res;
   } catch (error) {
