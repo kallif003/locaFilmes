@@ -159,8 +159,6 @@ let client = ref<ClientForm>({
 });
 
 watch(client.value, () => {
-  console.log("aqui");
-
   if (typeAction.value == Actions.SAVE) {
     validateDataToCreateClient(client.value);
   } else {

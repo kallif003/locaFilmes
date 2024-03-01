@@ -48,8 +48,6 @@ export const gettAllNamesApi = async (permissions: string[]) => {
 
     const res = await backClient().post(Routes.GET_ALL_NAMES, data);
 
-    console.log("names", res);
-
     return res;
   } catch (error) {
     return error;
@@ -63,8 +61,6 @@ export const gettAllDocNumbersApi = async (permissions: string[]) => {
     };
 
     const res = await backClient().post(Routes.GET_ALL_DOCNUMBERS, data);
-
-    console.log("d", res);
 
     return res;
   } catch (error) {

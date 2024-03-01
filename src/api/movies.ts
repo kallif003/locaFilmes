@@ -96,8 +96,6 @@ export const getLocationByFilter = async (location: ILocationFilter) => {
       }
     }
 
-    console.log("req", data);
-
     const res = await backClient().post(Routes.GET_LOCATION_BY_FILTER, data);
 
     return res;

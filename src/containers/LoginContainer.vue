@@ -67,8 +67,6 @@ const login = async (userInfo: IUserInfo) => {
 
   const response: any = await signin(userInfo);
 
-  console.log("res", response);
-
   responseHandler(response.status || response.response.status);
 
   showLoading.value = false;
