@@ -3,7 +3,7 @@
 yarn install
 ```
 
-### Compiles and hot-reloads for development
+### Run project
 ```
 Docker: docker build -t nome-da-sua-imagem .
 docker run -p 8080:8080 nome-da-sua-imagem
