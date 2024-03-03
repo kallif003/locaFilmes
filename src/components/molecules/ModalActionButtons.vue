@@ -1,6 +1,7 @@
 <template>
   <div class="flex justify-end w-full space-x-5 mt-5">
     <Button
+      id="btn-register"
       type="submit"
       btnType="confirmButton"
       :class="showButton ? ' bg-v_gold' : 'bg-v_dark_gray'"

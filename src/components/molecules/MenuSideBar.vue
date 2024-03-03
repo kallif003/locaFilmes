@@ -3,6 +3,7 @@
     <Wrapper type="menuIcon">
       <div v-for="menu in menuIcons" :key="menu.id" class="mt-2">
         <button
+          :id="menu.id"
           @click="setIdBtn(menu.path)"
           :class="menu.path == idBtn ? 'text-v_gold' : 'text-white'"
           v-if="hasPermission(menu.permissions)"

@@ -1,12 +1,12 @@
 <template>
   <Container type="page">
-    <Loading v-if="showLoading" />
+    <Loading :showLoading="showLoading" />
 
     <Notification
       :title="title"
       :subTitle="subTitle"
       @closeModal="closeNotificationModal"
-      v-if="showNotificationModal"
+      :showNotificationModal="showNotificationModal"
     />
 
     <WrapperModal
@@ -320,9 +320,9 @@ const getMovies = async (currentaPage: number) => {
 
   const AllMovies: any = await getAllMovies(currentaPage);
 
-  movies.value = parserMovies(AllMovies.data.results);
-
   showLoading.value = false;
+
+  movies.value = parserMovies(AllMovies?.data?.results);
 };
 
 const returnMovie = async (id: string) => {

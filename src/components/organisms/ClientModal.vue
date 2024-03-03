@@ -4,6 +4,7 @@
 
     <div class="flex justify-between flex-wrap space-y-2 px-2 py-2">
       <Input
+        id="customer-name"
         inputType="input"
         :is-disabled="false"
         placeholder="Nome:"
@@ -12,6 +13,7 @@
       />
 
       <Input
+        id="customer-surname"
         inputType="input"
         :is-disabled="false"
         placeholder="Sobrenome:"
@@ -20,6 +22,7 @@
       />
 
       <Input
+        id="customer-email"
         inputType="input"
         :is-disabled="false"
         placeholder="Email:"
@@ -28,6 +31,7 @@
       />
 
       <Input
+        id="customer-phone"
         inputType="input"
         :is-disabled="false"
         placeholder="Telefone:"
@@ -36,6 +40,7 @@
       />
 
       <Input
+        id="customer-cpf"
         :value="client.docNum"
         inputType="input"
         maxlength="14"
@@ -46,6 +51,7 @@
       />
 
       <Input
+        id="customer-zipcode"
         inputType="input"
         :is-disabled="false"
         placeholder="Cep:"
@@ -54,6 +60,7 @@
       />
 
       <Input
+        id="customer-street"
         :value="client.street"
         inputType="input"
         :is-disabled="false"
@@ -63,6 +70,7 @@
       />
 
       <Input
+        id="customer-district"
         :value="client.district"
         inputType="input"
         :is-disabled="false"
@@ -72,6 +80,7 @@
       />
 
       <Input
+        id="customer-city"
         :value="client.city"
         inputType="input"
         :is-disabled="false"
@@ -81,6 +90,7 @@
       />
 
       <Input
+        id="customer-state"
         :value="client.state"
         inputType="input"
         :is-disabled="false"

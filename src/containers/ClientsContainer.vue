@@ -1,12 +1,12 @@
 <template>
   <Container type="page">
-    <Loading v-if="showLoading" />
+    <Loading :showLoading="showLoading" />
 
     <Notification
       :title="title"
       :subTitle="subTitle"
       @closeModal="closeNotificationModal"
-      v-if="showNotificationModal"
+      :showNotificationModal="showNotificationModal"
     />
 
     <ActionModal
@@ -54,6 +54,7 @@
       </Wrapper>
 
       <Button
+        id="register-client"
         btnType="submit"
         class="bg-white"
         @click="openClientModal(Actions.SAVE, '')"
@@ -185,6 +186,8 @@ const setItemsPerPage = (value: number) => {
 const handleClient = (value: string, key: string) => {
   client.value[key] = value;
 
+  console.log("oi", client.value);
+
   if (typeAction.value == Actions.SAVE) {
     validateDataToCreateClient(client.value);
   } else {
@@ -248,13 +251,18 @@ const changeVariableState = () => {
 const validateDataToCreateClient = (clientForm: ClientForm) => {
   let validate = [];
 
+  console.log("cl", clientForm);
+
   const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(clientForm.email!);
 
   for (const key in clientForm) {
     if (clientForm[key as keyof ClientForm] != "" && regex) {
       validate.push(key);
+      console.log("key", clientForm[key as keyof ClientForm]);
     }
   }
+
+  console.log("va", validate.length);
 
   if (validate.length == 10) {
     showButton.value = true;
@@ -456,6 +464,11 @@ const validateZipCode = async (value: string) => {
 
   if (/^\d{5}-?\d{3}$/.test(value)) {
     const adress = await getAdress(value);
+
+    //client.value.street = "";
+    client.value.district = "";
+    client.value.city = "";
+    client.value.state = "";
 
     parseAdress(adress);
   }

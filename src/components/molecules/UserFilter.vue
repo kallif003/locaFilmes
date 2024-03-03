@@ -3,6 +3,7 @@
     <div>
       <h1>Buscar por Usuário:</h1>
       <Select
+        id="userFilter"
         type="filter"
         v-model="usersSelected"
         @click="selectUser(usersSelected)"
@@ -16,6 +17,7 @@
     <div class="sm:mt-2">
       <h1>Buscar por Documento:</h1>
       <Select
+        id="docNumFillter"
         type="filter"
         v-model="docNumSelected"
         @click="selectUserByDocNum(docNumSelected)"

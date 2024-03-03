@@ -1,5 +1,5 @@
 <template>
-  <Container type="backgroundContainer">
+  <Container type="backgroundContainer" v-if="showNotificationModal">
     <Wrapper type="modal">
       <Wrapper type="notification">
         <h1 class="text-v_blue text-[2rem]">{{ title }}</h1>
@@ -9,6 +9,7 @@
         </h3>
 
         <Button
+          id="btn-close"
           btn-type="submit"
           class="bg-v_gold text-white mt-5"
           @click="$emit('closeModal', false)"
@@ -35,5 +36,7 @@ defineProps({
     type: String,
     required: true,
   },
+
+  showNotificationModal: { type: Boolean, required: true },
 });
 </script>

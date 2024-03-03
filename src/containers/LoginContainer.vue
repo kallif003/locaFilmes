@@ -1,5 +1,5 @@
 <template>
-  <Loading v-if="showLoading" />
+  <Loading :showLoading="showLoading" />
 
   <Container type="login">
     <Wrapper type="logo">
@@ -11,9 +11,10 @@
       :showButton="showButton"
       :validationError="validationError"
       :errorMessage="errorMessage"
-      :show-passord="showPassord"
+      :inputType="inputType"
+      :showPassword="showPassword"
       :validatedUserInfo="validatedUserInfo"
-      :login="login"
+      @login="login"
     />
   </Container>
 </template>
@@ -37,18 +38,17 @@ let eyeIcon = ref(false);
 let showButton = ref(false);
 let validationError = ref(false);
 let errorMessage = ref("");
+let inputType = ref("password");
 
-const showPassord = (event: Event) => {
+const showPassword = (event: Event) => {
   event.stopPropagation();
 
   eyeIcon.value = !eyeIcon.value;
 
-  let input = document.querySelector("#pass");
-
-  if (input?.getAttribute("type") == "password") {
-    input.setAttribute("type", "text");
+  if (inputType.value == "password") {
+    inputType.value = "text";
   } else {
-    input?.setAttribute("type", "password");
+    inputType.value = "password";
   }
 };
 
@@ -67,7 +67,9 @@ const login = async (userInfo: IUserInfo) => {
 
   const response: any = await signin(userInfo);
 
-  responseHandler(response.status || response.response.status);
+  console.log("restttt", response);
+
+  responseHandler(response?.status || response?.response?.status);
 
   showLoading.value = false;
 };

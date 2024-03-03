@@ -4,6 +4,7 @@
 
     <div :style="styles">
       <Input
+        id="username"
         inputType="input"
         :is-disabled="false"
         placeholder="Nome:"
@@ -12,6 +13,7 @@
       />
 
       <Input
+        id="user-email"
         inputType="input"
         :is-disabled="false"
         placeholder="Email:"
@@ -20,6 +22,7 @@
       />
 
       <Input
+        id="user-docNum"
         inputType="input"
         :is-disabled="false"
         placeholder="Documento:"
@@ -28,6 +31,7 @@
       />
 
       <Input
+        id="user-password"
         inputType="input"
         type="password"
         :is-disabled="false"

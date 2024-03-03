@@ -2,7 +2,12 @@
   <Container type="itemsPerPageContainer">
     <h1 class="text-black text-[1.2rem]">Exibir mais</h1>
 
-    <Select type="itemsPerPage" v-model="perPage" @click="getPerPage">
+    <Select
+      type="itemsPerPage"
+      v-model="perPage"
+      @click="getPerPage"
+      id="itemsPerPage"
+    >
       <option v-for="(item, index) in items" :value="item" :key="index">
         {{ item }}
       </option>

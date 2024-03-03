@@ -1,6 +1,10 @@
 <template>
   <Container type="paginationContainer">
-    <button @click="previous" :disabled="maxPage === 0 ? true : false">
+    <button
+      @click="previous"
+      :disabled="maxPage === 0 ? true : false"
+      id="less"
+    >
       <v-icon icon="mdi-chevron-left" :size="45" class="text-v_dark_gray" />
     </button>
 
@@ -42,7 +46,7 @@
       <v-icon icon="mdi-dots-horizontal" :size="20" />
     </Button>
 
-    <button @click="next" :disabled="maxPage === 0 ? true : false">
+    <button @click="next" :disabled="maxPage === 0 ? true : false" id="plus">
       <v-icon icon="mdi-chevron-right" :size="45" class="text-v_dark_gray" />
     </button>
   </Container>

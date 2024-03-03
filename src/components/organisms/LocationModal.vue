@@ -3,6 +3,7 @@
     <h1 class="text-v_medium_gray mb-2">Alugar Filme</h1>
 
     <Input
+      id="rental-input"
       :value="docNum"
       inputType="input"
       :is-disabled="false"

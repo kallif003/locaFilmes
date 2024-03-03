@@ -4,7 +4,7 @@
 
     <Wrapper
       v-for="(items, index) in content"
-      :key="index"
+      :key="'customer' + index"
       type="backgroundCard"
       class="h-[16rem]"
     >
@@ -60,6 +60,7 @@
           <v-menu transition="slide-y-transition">
             <template v-slot:activator="{ props }">
               <button
+                id="select-action"
                 v-bind="props"
                 :disabled="items.status == 'Inativo' ? true : false"
               >
@@ -69,7 +70,10 @@
 
             <v-list>
               <v-list-item>
-                <button @click="openUserModal(Actions.UPDATE, items.id)">
+                <button
+                  @click="openUserModal(Actions.UPDATE, items.id)"
+                  id="update-customer"
+                >
                   Atualizar
                 </button>
               </v-list-item>

@@ -5,6 +5,7 @@
     <div>
       <h1>Buscar por Usuário:</h1>
       <Select
+        id="customer-filter"
         type="filter"
         v-model="clientSelected"
         @click="selectClient(clientSelected)"
@@ -18,6 +19,7 @@
     <div class="sm:mt-2">
       <h1>Buscar por Documento:</h1>
       <Select
+        id="customer-docNum"
         type="filter"
         v-model="docNumSelected"
         @click="selectDocNum(docNumSelected)"
@@ -31,6 +33,7 @@
     <div class="sm:mt-2">
       <h1>Buscar por Status:</h1>
       <Select
+        id="customer-status"
         type="filter"
         v-model="statusSelected"
         @click="selectStatus(statusSelected)"

@@ -23,7 +23,7 @@ const menuIcons = [
     permissions: [AuthorizationUser.ADMIN],
   },
   {
-    id: "clients",
+    id: "btn-clients",
     icon: "mdi-account-group",
     path: "/Painel/Clientes",
     label: "Clientes",

@@ -1,12 +1,12 @@
 <template>
   <Container type="page">
-    <Loading v-if="showLoading" />
+    <Loading :showLoading="showLoading" />
 
     <Notification
       :title="title"
       :subTitle="subTitle"
+      :showNotificationModal="showNotificationModal"
       @closeModal="closeNotificationModal"
-      v-if="showNotificationModal"
     />
 
     <ActionModal
@@ -52,6 +52,7 @@
       </Wrapper>
 
       <Button
+        id="register"
         btnType="submit"
         class="bg-white"
         @click="openUserModal(Actions.SAVE, '')"
@@ -316,18 +317,13 @@ const getAllUsers = async (currentPage: number, itemsPerPage: number) => {
     permission.value
   );
 
-  if (res.status == 200) {
-    users.value = parseUser(res.data.users);
+  if (res?.status == 200) {
+    users.value = parseUser(res?.data.users);
 
-    totalPages.value = setTotalPages(res.data.totalPages);
-  } else if (res?.response.status == 404) {
+    totalPages.value = setTotalPages(res?.data.totalPages);
+  } else if (res?.status == 404) {
     users.value = [];
-
     totalPages.value = [];
-  } else {
-    handleApiResponse(res?.response?.data?.message);
-
-    showNotificationModal.value = true;
   }
 
   showLoading.value = false;
@@ -392,10 +388,8 @@ const getAllDocNumbers = async () => {
 onMounted(async () => {
   permission.value = getPermission();
 
-  await Promise.all([
-    getAllUsers(page.value, itemsPerPage.value),
-    getAllNames(),
-    getAllDocNumbers(),
-  ]);
+  await getAllUsers(page.value, itemsPerPage.value);
+  await getAllNames();
+  await getAllDocNumbers();
 });
 </script>
