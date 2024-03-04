@@ -186,8 +186,6 @@ const setItemsPerPage = (value: number) => {
 const handleClient = (value: string, key: string) => {
   client.value[key] = value;
 
-  console.log("oi", client.value);
-
   if (typeAction.value == Actions.SAVE) {
     validateDataToCreateClient(client.value);
   } else {
@@ -251,18 +249,13 @@ const changeVariableState = () => {
 const validateDataToCreateClient = (clientForm: ClientForm) => {
   let validate = [];
 
-  console.log("cl", clientForm);
-
   const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(clientForm.email!);
 
   for (const key in clientForm) {
     if (clientForm[key as keyof ClientForm] != "" && regex) {
       validate.push(key);
-      console.log("key", clientForm[key as keyof ClientForm]);
     }
   }
-
-  console.log("va", validate.length);
 
   if (validate.length == 10) {
     showButton.value = true;
