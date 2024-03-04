@@ -36,16 +36,12 @@
       <ListLocationModal :locations="locations" :returnMovie="returnMovie">
         <template v-slot:locationFilter>
           <LocationFilter
-            :select-date="selectDate"
-            :selectClient="selectClient"
-            :selectStatus="selectStatus"
+            :selectFilter="selectFilter"
+            @movieFilterCleaning="movieFilterCleaning"
+            :locationFilterIsSelected="locationFilterSelected"
             :clients="clientName"
             :docNum="allDocNum"
-          >
-            <button @click="movieFilterCleaning" v-if="locationFilterSelected">
-              Limpar<v-icon icon="mdi-close" />
-            </button>
-          </LocationFilter>
+          />
         </template>
 
         <template v-slot:header>
@@ -114,7 +110,13 @@ import LocationFilter from "@/components/molecules/LocationFilter.vue";
 import { useHead } from "@unhead/vue";
 import MovieFilter from "@/components/molecules/MovieFilter.vue";
 import { ref } from "vue";
-import { ILocationApi, IMessage, IMovies, ILocation } from "@/utils/interfaces";
+import {
+  ILocationApi,
+  IMessage,
+  IMovies,
+  ILocation,
+  ILocationFilter,
+} from "@/utils/interfaces";
 import { onMounted } from "vue";
 import {
   createLocationApi,
@@ -135,6 +137,12 @@ useHead({
 const headers = ["Cliente", "Filme", "Data locação", "Data entrega", "Status"];
 
 const { setTotalPages, maskZipCode } = useProps();
+
+let filter: ILocationFilter = {
+  customer: "",
+  createdAt: "",
+  status: "",
+};
 
 let showLoading = ref(false);
 let showNotificationModal = ref(false);
@@ -217,47 +225,13 @@ const setPagination = async (currentPage: number) => {
   }
 };
 
-const selectStatus = async (status: string) => {
-  if (status != "") {
-    const res: any = await getLocationByFilter({
-      status,
-      customer: null,
-      createdAt: null,
-    });
+const selectFilter = async (value: string, key: string) => {
+  filter = { customer: "", createdAt: "", status: "" };
 
-    if (res?.status == 200) {
-      locations.value = parserLocation(res?.data.locations);
-      totalLocations.value = setTotalPages(res?.data.totalPages);
+  if (value != "") {
+    filter[key] = value;
 
-      locationFilterSelected.value = true;
-    }
-  }
-};
-
-const selectClient = async (name: string) => {
-  if (name != "") {
-    const res: any = await getLocationByFilter({
-      status: null,
-      customer: name,
-      createdAt: null,
-    });
-
-    if (res?.status == 200) {
-      locations.value = parserLocation(res?.data.locations);
-      totalLocations.value = setTotalPages(res?.data.totalPages);
-
-      locationFilterSelected.value = true;
-    }
-  }
-};
-
-const selectDate = async (date: string) => {
-  if (date != "") {
-    const res: any = await getLocationByFilter({
-      status: null,
-      customer: null,
-      createdAt: date,
-    });
+    const res: any = await getLocationByFilter(filter);
 
     if (res?.status == 200) {
       locations.value = parserLocation(res?.data.locations);

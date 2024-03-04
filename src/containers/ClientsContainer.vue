@@ -134,6 +134,7 @@ let filter: IFilter = {
   name: "",
   docNum: "",
   status: "",
+  date: "",
 };
 
 let showLoading = ref(false);
@@ -255,7 +256,7 @@ const changeVariableState = () => {
 };
 
 const selectFilter = async (value: string, key: string) => {
-  filter = { name: "", docNum: "", status: "" };
+  filter = { name: "", docNum: "", status: "", date: "" };
 
   if (value != "") {
     clients.value = [];

@@ -15,6 +15,7 @@ export interface IFilter {
   name: string | null;
   docNum: string | null;
   status: string | null;
+  date: string | null;
   [key: string]: string | null;
 }
 
@@ -102,6 +103,7 @@ export interface ILocationFilter {
   customer: string | null;
   status: string | null;
   createdAt: string | null;
+  [key: string]: string | null;
 }
 
 export interface ILocationApi {
