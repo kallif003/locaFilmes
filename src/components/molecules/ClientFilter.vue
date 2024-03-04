@@ -44,6 +44,10 @@
       </Select>
     </div>
   </div>
+
+  <button @click="clientFilterCleaning" v-if="clientIsSelected">
+    Limpar<v-icon icon="mdi-close" />
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -57,41 +61,43 @@ let statusSelected = ref("");
 
 const status = ["Ativo", "Inativo"];
 
+const emit = defineEmits(["clientFilterCleaning"]);
+
 let props = defineProps({
-  selectClientByDocNum: {
-    type: Function as PropType<(docNum: string) => void>,
+  selectFilter: {
+    type: Function as PropType<(value: string, key: string) => void>,
     required: true,
   },
 
-  selectClient: {
-    type: Function as PropType<(client: string) => void>,
-    required: true,
-  },
-
-  selectStatus: {
-    type: Function as PropType<(status: string) => void>,
-    required: true,
-  },
+  clientIsSelected: { type: Boolean, requerid: true },
 
   clients: { type: Array as PropType<string[]>, required: true },
 
   docNum: { type: Array as PropType<any[]>, required: true },
 });
 
+const clientFilterCleaning = () => {
+  clientSelected.value = "";
+  docNumSelected.value = "";
+  statusSelected.value = "";
+
+  emit("clientFilterCleaning");
+};
+
 const selectDocNum = (docNum: string) => {
-  props.selectClientByDocNum(docNum);
+  props.selectFilter(docNum, "docNum");
   clientSelected.value = "";
   statusSelected.value = "";
 };
 
 const selectClient = (username: string) => {
-  props.selectClient(username);
+  props.selectFilter(username, "name");
   docNumSelected.value = "";
   statusSelected.value = "";
 };
 
 const selectStatus = (status: string) => {
-  props.selectStatus(status);
+  props.selectFilter(status, "status");
 
   clientSelected.value = "";
   docNumSelected.value = "";

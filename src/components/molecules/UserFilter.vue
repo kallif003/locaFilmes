@@ -28,6 +28,10 @@
       </Select>
     </div>
   </div>
+
+  <button @click="userFilterCleaning" v-if="userIsSelected" class="mt-2">
+    Limpar<v-icon icon="mdi-close" />
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -38,29 +42,35 @@ import { PropType, ref } from "vue";
 let usersSelected = ref("");
 let docNumSelected = ref("");
 
+const emit = defineEmits(["userFilterCleaning"]);
+
 let props = defineProps({
-  selectUserByDocNum: {
-    type: Function as PropType<(docNum: string) => void>,
+  selectFilter: {
+    type: Function as PropType<(value: string, key: string) => void>,
     required: true,
   },
 
-  selectUser: {
-    type: Function as PropType<(user: string) => void>,
-    required: true,
-  },
+  userIsSelected: { type: Boolean, requerid: true },
 
   users: { type: Array as PropType<string[]>, required: true },
 
   docNum: { type: Array as PropType<any[]>, required: true },
 });
 
+const userFilterCleaning = () => {
+  usersSelected.value = "";
+  docNumSelected.value = "";
+
+  emit("userFilterCleaning");
+};
+
 const selectUserByDocNum = (docNum: string) => {
-  props.selectUserByDocNum(docNum);
+  props.selectFilter(docNum, "docNum");
   usersSelected.value = "";
 };
 
 const selectUser = (username: string) => {
-  props.selectUser(username);
+  props.selectFilter(username, "name");
 
   docNumSelected.value = "";
 };

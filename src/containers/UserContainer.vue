@@ -39,16 +39,12 @@
     <Wrapper type="header">
       <Wrapper type="filter">
         <UserFilter
+          :userIsSelected="userSelected"
           :users="usernames"
           :docNum="docNum"
-          :selectUserByDocNum="selectUserByDocNum"
-          :selectUser="selectUser"
-          :userFilterCleaning="userFilterCleaning"
+          :selectFilter="selectFilter"
+          @userFilterCleaning="userFilterCleaning"
         />
-
-        <button @click="userFilterCleaning" v-if="userSelected" class="mt-2">
-          Limpar<v-icon icon="mdi-close" />
-        </button>
       </Wrapper>
 
       <Button
@@ -111,7 +107,7 @@ import UserTable from "@/components/organisms/UserTable.vue";
 import TableHead from "@/components/molecules/TableHead.vue";
 import EmptyTable from "@/components/molecules/EmptyTable.vue";
 import { onMounted, ref } from "vue";
-import { IMessage, IUsers, UseForm } from "@/utils/interfaces";
+import { IFilter, IMessage, IUsers, UseForm } from "@/utils/interfaces";
 import { Actions, AuthorizationUser } from "@/utils/enum";
 import { hasPermission, getPermission } from "@/utils/permissions";
 import {
@@ -134,6 +130,13 @@ const headers = ["Id", "Nome", "Email", "Documento", "Status"];
 const actions = ["Atualizar", "Deletar"];
 
 const { setTotalPages, inputWrappingStyle } = useProps();
+
+let filter: IFilter = {
+  name: "",
+  docNum: "",
+  status: "",
+  date: "",
+};
 
 let showLoading = ref(false);
 let showDeleteModal = ref(false);
@@ -209,6 +212,24 @@ const changeVariableState = () => {
   showUserModal.value = false;
   showButton.value = false;
   showLoading.value = false;
+};
+
+const selectFilter = async (value: string, key: string) => {
+  filter = { name: "", docNum: "", status: "", date: "" };
+
+  if (value != "") {
+    users.value = [];
+
+    filter[key] = value;
+
+    const res: any = await getUsersByNameOrDocNumApi(filter);
+
+    if (res?.status == 200) {
+      users.value = parseUser(res?.data);
+    }
+
+    userSelected.value = true;
+  }
 };
 
 const validateDataToCreateUser = (userForm: UseForm) => {
@@ -339,34 +360,6 @@ const parseUser = (data: any[]) => {
   }));
 
   return users;
-};
-
-const selectUserByDocNum = async (docNum: string) => {
-  if (docNum != "") {
-    users.value = [];
-
-    const res: any = await getUsersByNameOrDocNumApi(null, docNum);
-
-    if (res?.status == 200) {
-      users.value = parseUser(res?.data);
-    }
-
-    userSelected.value = true;
-  }
-};
-
-const selectUser = async (name: string) => {
-  if (name != "") {
-    users.value = [];
-
-    const res: any = await getUsersByNameOrDocNumApi(name, null);
-
-    if (res?.status == 200) {
-      users.value = parseUser(res?.data);
-    }
-
-    userSelected.value = true;
-  }
 };
 
 const getAllNames = async () => {

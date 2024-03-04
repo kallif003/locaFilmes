@@ -35,7 +35,10 @@
         v-model="date"
       />
     </div>
-    <slot></slot>
+
+    <button @click="movieFilterCleaning" v-if="locationFilterIsSelected">
+      Limpar<v-icon icon="mdi-close" />
+    </button>
   </div>
 </template>
 
@@ -46,27 +49,28 @@ import Select from "../atoms/Select.vue";
 import { PropType, ref } from "vue";
 
 let clientSelected = ref("");
-let docNumSelected = ref("");
 let statusSelected = ref("");
 let date = ref("");
 
 const status = ["Alugado", "Entregue"];
 
+const emit = defineEmits(["movieFilterCleaning"]);
+
+const movieFilterCleaning = () => {
+  clientSelected.value = "";
+  statusSelected.value = "";
+  date.value = "";
+
+  emit("movieFilterCleaning");
+};
+
 let props = defineProps({
-  selectClient: {
-    type: Function as PropType<(client: string) => void>,
+  selectFilter: {
+    type: Function as PropType<(value: string, key: string) => void>,
     required: true,
   },
 
-  selectStatus: {
-    type: Function as PropType<(status: string) => void>,
-    required: true,
-  },
-
-  selectDate: {
-    type: Function as PropType<(date: string) => void>,
-    required: true,
-  },
+  locationFilterIsSelected: { type: Boolean, required: true },
 
   clients: { type: Array as PropType<string[]>, required: true },
 
@@ -74,19 +78,16 @@ let props = defineProps({
 });
 
 watch(date, () => {
-  props.selectDate(date.value);
+  props.selectFilter(date.value, "createdAt");
 });
 
 const selectClient = (username: string) => {
-  props.selectClient(username);
-  docNumSelected.value = "";
+  props.selectFilter(username, "customer");
   statusSelected.value = "";
 };
 
 const selectStatus = (status: string) => {
-  props.selectStatus(status);
-
+  props.selectFilter(status, "status");
   clientSelected.value = "";
-  docNumSelected.value = "";
 };
 </script>

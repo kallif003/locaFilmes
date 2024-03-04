@@ -1,6 +1,6 @@
 import { backClient } from "@/clients/AxiosClient";
 import { Routes } from "@/utils/enum";
-import { UseForm } from "@/utils/interfaces";
+import { IFilter, UseForm } from "@/utils/interfaces";
 
 export const createUserApi = async (
   userForm: UseForm,
@@ -69,14 +69,16 @@ export const gettAllDocNumbersApi = async (permissions: string[]) => {
 };
 
 export const getUsersByNameOrDocNumApi = async (
-  name: string | null,
-  docNum: string | null
+  userFilter: Partial<IFilter>
 ) => {
   try {
-    const data = {
-      name,
-      docNum,
-    };
+    const data: Partial<IFilter> = {};
+
+    for (const key in userFilter) {
+      if (userFilter[key as keyof IFilter]) {
+        data[key as keyof IFilter] = userFilter[key as keyof IFilter];
+      }
+    }
 
     const res = await backClient().post(
       Routes.GET_USER_BY_NAME_OR_DOCNUM,

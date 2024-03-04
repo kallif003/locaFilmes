@@ -1,6 +1,6 @@
 import { backClient } from "@/clients/AxiosClient";
 import { Routes } from "@/utils/enum";
-import { ClientForm } from "@/utils/interfaces";
+import { ClientForm, IFilter } from "@/utils/interfaces";
 
 export const createClientApi = async (clientForm: ClientForm) => {
   try {
@@ -52,16 +52,16 @@ export const getAllDocNumbersApi = async () => {
 };
 
 export const getClientByNameOrDocNumOrStatusApi = async (
-  name: string | null,
-  docNum: string | null,
-  status: string | null
+  client: Partial<IFilter>
 ) => {
   try {
-    const data = {
-      name,
-      docNum,
-      status,
-    };
+    const data: Partial<IFilter> = {};
+
+    for (const key in client) {
+      if (client[key as keyof IFilter]) {
+        data[key as keyof IFilter] = client[key as keyof IFilter];
+      }
+    }
 
     const res = await backClient().post(
       Routes.GET_CUSTOMER_BY_NAME_OR_DOCNUM_OR_STATUS,

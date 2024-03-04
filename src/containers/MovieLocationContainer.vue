@@ -36,15 +36,12 @@
       <ListLocationModal :locations="locations" :returnMovie="returnMovie">
         <template v-slot:locationFilter>
           <LocationFilter
-            :select-date="selectDate"
-            :selectClient="selectClient"
-            :selectStatus="selectStatus"
+            :selectFilter="selectFilter"
+            @movieFilterCleaning="movieFilterCleaning"
+            :locationFilterIsSelected="locationFilterSelected"
             :clients="clientName"
             :docNum="allDocNum"
-          >
-            <button @click="movieFilterCleaning" v-if="locationFilterSelected">
-              Limpar<v-icon icon="mdi-close" /></button
-          ></LocationFilter>
+          />
         </template>
 
         <template v-slot:header>
@@ -113,7 +110,13 @@ import LocationFilter from "@/components/molecules/LocationFilter.vue";
 import { useHead } from "@unhead/vue";
 import MovieFilter from "@/components/molecules/MovieFilter.vue";
 import { ref } from "vue";
-import { ILocationApi, IMessage, IMovies, ILocation } from "@/utils/interfaces";
+import {
+  ILocationApi,
+  IMessage,
+  IMovies,
+  ILocation,
+  ILocationFilter,
+} from "@/utils/interfaces";
 import { onMounted } from "vue";
 import {
   createLocationApi,
@@ -135,6 +138,12 @@ const headers = ["Cliente", "Filme", "Data locação", "Data entrega", "Status"]
 
 const { setTotalPages, maskZipCode } = useProps();
 
+let filter: ILocationFilter = {
+  customer: "",
+  createdAt: "",
+  status: "",
+};
+
 let showLoading = ref(false);
 let showNotificationModal = ref(false);
 let showLocationModal = ref(false);
@@ -143,7 +152,6 @@ let allDocNum = ref<string[]>([]);
 let docNum = ref("");
 let clientName = ref<string[]>([]);
 let typeAction = ref("Alugar");
-
 let locations = ref<ILocation[]>([]);
 let client = ref({ name: "", phone: "" });
 let page = ref(1);
@@ -178,20 +186,6 @@ const handleClient = (doc: string) => {
   if (regex) getUserByDocNum(doc);
 };
 
-const getUserByDocNum = async (docNum: string) => {
-  const res: any = await validateRentalPermissionApi(docNum);
-
-  if (res?.status == 200) {
-    client.value.name = res.data.name;
-
-    client.value.phone = res.data.phone;
-
-    showButton.value = true;
-  } else {
-    errorMessage.value = res?.data.message.subTitle;
-  }
-};
-
 const closeLocationModal = (event: Event) => {
   event.stopPropagation();
   showLocationModal.value = false;
@@ -214,6 +208,52 @@ const changeVariableState = () => {
   showLoading.value = false;
 };
 
+const movieFilterCleaning = () => {
+  movieName.value = "";
+  movieSelected.value = false;
+  locationFilterSelected.value = false;
+
+  getMovies(page.value);
+  getLocations(page.value);
+};
+
+const setPagination = async (currentPage: number) => {
+  if (page.value != currentPage) {
+    page.value = currentPage;
+
+    getMovies(currentPage);
+  }
+};
+
+const selectFilter = async (value: string, key: string) => {
+  filter = { customer: "", createdAt: "", status: "" };
+
+  if (value != "") {
+    filter[key] = value;
+
+    const res: any = await getLocationByFilter(filter);
+
+    if (res?.status == 200) {
+      locations.value = parserLocation(res?.data.locations);
+      totalLocations.value = setTotalPages(res?.data.totalPages);
+
+      locationFilterSelected.value = true;
+    }
+  }
+};
+
+const returnMovie = async (id: string) => {
+  showLoading.value = true;
+
+  const res: any = await returnMovieApi(id);
+
+  if (res?.status == 200) {
+    getLocations(page.value);
+  }
+
+  showLoading.value = false;
+};
+
 const createLocation = async () => {
   showLoading.value = true;
 
@@ -232,71 +272,17 @@ const createLocation = async () => {
   changeVariableState();
 };
 
-const movieFilterCleaning = () => {
-  movieName.value = "";
-  movieSelected.value = false;
-  locationFilterSelected.value = false;
+const getUserByDocNum = async (docNum: string) => {
+  const res: any = await validateRentalPermissionApi(docNum);
 
-  getMovies(page.value);
-  getLocations(page.value);
-};
+  if (res?.status == 200) {
+    client.value.name = res.data.name;
 
-const setPagination = async (currentPage: number) => {
-  if (page.value != currentPage) {
-    page.value = currentPage;
+    client.value.phone = res.data.phone;
 
-    getMovies(currentPage);
-  }
-};
-
-const selectStatus = async (status: string) => {
-  if (status != "") {
-    const res: any = await getLocationByFilter({
-      status,
-      customer: null,
-      createdAt: null,
-    });
-
-    if (res?.status == 200) {
-      locations.value = parserLocation(res?.data.locations);
-      totalLocations.value = setTotalPages(res?.data.totalPages);
-
-      locationFilterSelected.value = true;
-    }
-  }
-};
-
-const selectClient = async (name: string) => {
-  if (name != "") {
-    const res: any = await getLocationByFilter({
-      status: null,
-      customer: name,
-      createdAt: null,
-    });
-
-    if (res?.status == 200) {
-      locations.value = parserLocation(res?.data.locations);
-      totalLocations.value = setTotalPages(res?.data.totalPages);
-
-      locationFilterSelected.value = true;
-    }
-  }
-};
-
-const selectDate = async (date: string) => {
-  if (date != "") {
-    const res: any = await getLocationByFilter({
-      status: null,
-      customer: null,
-      createdAt: date,
-    });
-
-    if (res?.status == 200) {
-      locations.value = parserLocation(res?.data.locations);
-      totalLocations.value = setTotalPages(res?.data.totalPages);
-
-      locationFilterSelected.value = true;
-    }
+    showButton.value = true;
+  } else {
+    errorMessage.value = res?.data.message.subTitle;
   }
 };
 
@@ -325,24 +311,20 @@ const getMovies = async (currentaPage: number) => {
   movies.value = parserMovies(AllMovies?.data?.results);
 };
 
-const returnMovie = async (id: string) => {
-  showLoading.value = true;
-
-  const res: any = await returnMovieApi(id);
-
-  if (res?.status == 200) {
-    getLocations(page.value);
-  }
-
-  showLoading.value = false;
-};
-
 const getLocations = async (currentaPage: number) => {
   const res: any = await getAllLocationApi(currentaPage);
 
   if (res?.status == 200) {
     locations.value = parserLocation(res?.data.locations);
     totalLocations.value = setTotalPages(res?.data.totalPages);
+  }
+};
+
+const getAllClientNames = async () => {
+  const res: any = await getAllClientNamesApi();
+
+  if (res?.status == 200) {
+    clientName.value = res?.data;
   }
 };
 
@@ -381,14 +363,6 @@ const parserMovies = (data: any[]) => {
     release_date: movies.release_date,
     id: movies.id,
   }));
-};
-
-const getAllClientNames = async () => {
-  const res: any = await getAllClientNamesApi();
-
-  if (res?.status == 200) {
-    clientName.value = res?.data;
-  }
 };
 
 onMounted(async () => {

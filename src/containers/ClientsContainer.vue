@@ -41,16 +41,12 @@
     <Wrapper type="header">
       <Wrapper type="filter">
         <ClientFilter
+          :clientIsSelected="clientSelected"
           :clients="clientName"
           :docNum="docNum"
-          :selectStatus="selectStatus"
-          :selectClientByDocNum="selectDocNum"
-          :selectClient="selectClient"
+          :selectFilter="selectFilter"
+          @clientFilterCleaning="clientFilterCleaning"
         />
-
-        <button @click="clientFilterCleaning" v-if="clientSelected">
-          Limpar<v-icon icon="mdi-close" />
-        </button>
       </Wrapper>
 
       <Button
@@ -107,7 +103,13 @@ import { useHead } from "@unhead/vue";
 import EmptyTable from "@/components/molecules/EmptyTable.vue";
 import { Actions } from "@/utils/enum";
 import { onMounted, ref, watch } from "vue";
-import { ClientForm, IClient, IMessage, IViaCepApi } from "@/utils/interfaces";
+import {
+  ClientForm,
+  IClient,
+  IFilter,
+  IMessage,
+  IViaCepApi,
+} from "@/utils/interfaces";
 import useProps from "@/context/useProps";
 import {
   createClientApi,
@@ -127,6 +129,13 @@ useHead({
 const { inputWrappingStyle, setTotalPages, maskZipCode } = useProps();
 
 const actions = ["Atualizar", "Deletar"];
+
+let filter: IFilter = {
+  name: "",
+  docNum: "",
+  status: "",
+  date: "",
+};
 
 let showLoading = ref(false);
 let showDeleteModal = ref(false);
@@ -183,16 +192,6 @@ const setItemsPerPage = (value: number) => {
   }
 };
 
-const handleClient = (value: string, key: string) => {
-  client.value[key] = value;
-
-  if (typeAction.value == Actions.SAVE) {
-    validateDataToCreateClient(client.value);
-  } else {
-    validateDataToUpdateClient(client.value);
-  }
-};
-
 const closeNotificationModal = () => {
   showNotificationModal.value = false;
 };
@@ -239,11 +238,39 @@ const handleApiResponse = (message: IMessage) => {
   subTitle.value = message.subTitle;
 };
 
+const handleClient = (value: string, key: string) => {
+  client.value[key] = value;
+
+  if (typeAction.value == Actions.SAVE) {
+    validateDataToCreateClient(client.value);
+  } else {
+    validateDataToUpdateClient(client.value);
+  }
+};
+
 const changeVariableState = () => {
   showNotificationModal.value = true;
   showClientModal.value = false;
   showButton.value = false;
   showLoading.value = false;
+};
+
+const selectFilter = async (value: string, key: string) => {
+  filter = { name: "", docNum: "", status: "", date: "" };
+
+  if (value != "") {
+    clients.value = [];
+
+    filter[key] = value;
+
+    const res: any = await getClientByNameOrDocNumOrStatusApi(filter);
+
+    if (res?.status == 200) {
+      clients.value = parserClient(res?.data);
+    }
+
+    clientSelected.value = true;
+  }
 };
 
 const validateDataToCreateClient = (clientForm: ClientForm) => {
@@ -283,6 +310,7 @@ const validateDataToUpdateClient = (clientForm: ClientForm) => {
   else showButton.value = false;
 };
 
+// crud user
 const createOrUpdateUser = (clientForm: ClientForm, action: string) => {
   showLoading.value = true;
 
@@ -365,75 +393,6 @@ const getAllClients = async (currentPage: number, itemsPerPage: number) => {
   showLoading.value = false;
 };
 
-const parserClient = (data: any[]) => {
-  const clients = data.map((client) => ({
-    id: client._id,
-    name: client.name,
-    email: client.email,
-    docNum: client.docNum,
-    phone: client.phone,
-    surname: client.surname,
-    cep: client.cep,
-    street: client.street,
-    district: client.district,
-    city: client.city,
-    state: client.state,
-    status: client.deleted ? "Inativo" : "Ativo",
-  }));
-
-  return clients;
-};
-
-const selectStatus = async (status: string) => {
-  if (status != "") {
-    clients.value = [];
-
-    const res: any = await getClientByNameOrDocNumOrStatusApi(
-      null,
-      null,
-      status
-    );
-
-    if (res?.status == 200) {
-      clients.value = parserClient(res?.data);
-    }
-
-    clientSelected.value = true;
-  }
-};
-
-const selectDocNum = async (docNum: string) => {
-  if (docNum != "") {
-    clients.value = [];
-
-    const res: any = await getClientByNameOrDocNumOrStatusApi(
-      null,
-      docNum,
-      null
-    );
-
-    if (res?.status == 200) {
-      clients.value = parserClient(res?.data);
-    }
-
-    clientSelected.value = true;
-  }
-};
-
-const selectClient = async (name: string) => {
-  if (name != "") {
-    clients.value = [];
-
-    const res: any = await getClientByNameOrDocNumOrStatusApi(name, null, null);
-
-    if (res?.status == 200) {
-      clients.value = parserClient(res?.data);
-    }
-
-    clientSelected.value = true;
-  }
-};
-
 const getAllClientNames = async () => {
   const res: any = await getAllClientNamesApi();
 
@@ -458,13 +417,32 @@ const validateZipCode = async (value: string) => {
   if (/^\d{5}-?\d{3}$/.test(value)) {
     const adress = await getAdress(value);
 
-    //client.value.street = "";
+    client.value.street = "";
     client.value.district = "";
     client.value.city = "";
     client.value.state = "";
 
     parseAdress(adress);
   }
+};
+
+const parserClient = (data: any[]) => {
+  const clients = data.map((client) => ({
+    id: client._id,
+    name: client.name,
+    email: client.email,
+    docNum: client.docNum,
+    phone: client.phone,
+    surname: client.surname,
+    cep: client.cep,
+    street: client.street,
+    district: client.district,
+    city: client.city,
+    state: client.state,
+    status: client.deleted ? "Inativo" : "Ativo",
+  }));
+
+  return clients;
 };
 
 const parseAdress = (addressData: IViaCepApi) => {
