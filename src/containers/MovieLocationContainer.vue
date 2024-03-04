@@ -43,8 +43,9 @@
             :docNum="allDocNum"
           >
             <button @click="movieFilterCleaning" v-if="locationFilterSelected">
-              Limpar<v-icon icon="mdi-close" /></button
-          ></LocationFilter>
+              Limpar<v-icon icon="mdi-close" />
+            </button>
+          </LocationFilter>
         </template>
 
         <template v-slot:header>
@@ -143,7 +144,6 @@ let allDocNum = ref<string[]>([]);
 let docNum = ref("");
 let clientName = ref<string[]>([]);
 let typeAction = ref("Alugar");
-
 let locations = ref<ILocation[]>([]);
 let client = ref({ name: "", phone: "" });
 let page = ref(1);
@@ -178,20 +178,6 @@ const handleClient = (doc: string) => {
   if (regex) getUserByDocNum(doc);
 };
 
-const getUserByDocNum = async (docNum: string) => {
-  const res: any = await validateRentalPermissionApi(docNum);
-
-  if (res?.status == 200) {
-    client.value.name = res.data.name;
-
-    client.value.phone = res.data.phone;
-
-    showButton.value = true;
-  } else {
-    errorMessage.value = res?.data.message.subTitle;
-  }
-};
-
 const closeLocationModal = (event: Event) => {
   event.stopPropagation();
   showLocationModal.value = false;
@@ -212,24 +198,6 @@ const changeVariableState = () => {
   showLocationModal.value = false;
   showButton.value = false;
   showLoading.value = false;
-};
-
-const createLocation = async () => {
-  showLoading.value = true;
-
-  const res: any = await createLocationApi(
-    docNum.value,
-    client.value.name,
-    movieInfo.value.title
-  );
-
-  if (res?.status == 201) {
-    getLocations(page.value);
-
-    handleApiResponse(res?.data.message);
-  }
-
-  changeVariableState();
 };
 
 const movieFilterCleaning = () => {
@@ -300,6 +268,50 @@ const selectDate = async (date: string) => {
   }
 };
 
+const returnMovie = async (id: string) => {
+  showLoading.value = true;
+
+  const res: any = await returnMovieApi(id);
+
+  if (res?.status == 200) {
+    getLocations(page.value);
+  }
+
+  showLoading.value = false;
+};
+
+const createLocation = async () => {
+  showLoading.value = true;
+
+  const res: any = await createLocationApi(
+    docNum.value,
+    client.value.name,
+    movieInfo.value.title
+  );
+
+  if (res?.status == 201) {
+    getLocations(page.value);
+
+    handleApiResponse(res?.data.message);
+  }
+
+  changeVariableState();
+};
+
+const getUserByDocNum = async (docNum: string) => {
+  const res: any = await validateRentalPermissionApi(docNum);
+
+  if (res?.status == 200) {
+    client.value.name = res.data.name;
+
+    client.value.phone = res.data.phone;
+
+    showButton.value = true;
+  } else {
+    errorMessage.value = res?.data.message.subTitle;
+  }
+};
+
 const getMovieByName = async (name: string) => {
   if (name != "") {
     showLoading.value = true;
@@ -325,24 +337,20 @@ const getMovies = async (currentaPage: number) => {
   movies.value = parserMovies(AllMovies?.data?.results);
 };
 
-const returnMovie = async (id: string) => {
-  showLoading.value = true;
-
-  const res: any = await returnMovieApi(id);
-
-  if (res?.status == 200) {
-    getLocations(page.value);
-  }
-
-  showLoading.value = false;
-};
-
 const getLocations = async (currentaPage: number) => {
   const res: any = await getAllLocationApi(currentaPage);
 
   if (res?.status == 200) {
     locations.value = parserLocation(res?.data.locations);
     totalLocations.value = setTotalPages(res?.data.totalPages);
+  }
+};
+
+const getAllClientNames = async () => {
+  const res: any = await getAllClientNamesApi();
+
+  if (res?.status == 200) {
+    clientName.value = res?.data;
   }
 };
 
@@ -381,14 +389,6 @@ const parserMovies = (data: any[]) => {
     release_date: movies.release_date,
     id: movies.id,
   }));
-};
-
-const getAllClientNames = async () => {
-  const res: any = await getAllClientNamesApi();
-
-  if (res?.status == 200) {
-    clientName.value = res?.data;
-  }
 };
 
 onMounted(async () => {

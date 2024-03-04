@@ -191,16 +191,6 @@ const setItemsPerPage = (value: number) => {
   }
 };
 
-const handleClient = (value: string, key: string) => {
-  client.value[key] = value;
-
-  if (typeAction.value == Actions.SAVE) {
-    validateDataToCreateClient(client.value);
-  } else {
-    validateDataToUpdateClient(client.value);
-  }
-};
-
 const closeNotificationModal = () => {
   showNotificationModal.value = false;
 };
@@ -247,11 +237,39 @@ const handleApiResponse = (message: IMessage) => {
   subTitle.value = message.subTitle;
 };
 
+const handleClient = (value: string, key: string) => {
+  client.value[key] = value;
+
+  if (typeAction.value == Actions.SAVE) {
+    validateDataToCreateClient(client.value);
+  } else {
+    validateDataToUpdateClient(client.value);
+  }
+};
+
 const changeVariableState = () => {
   showNotificationModal.value = true;
   showClientModal.value = false;
   showButton.value = false;
   showLoading.value = false;
+};
+
+const selectFilter = async (value: string, key: string) => {
+  filter = { name: "", docNum: "", status: "" };
+
+  if (value != "") {
+    clients.value = [];
+
+    filter[key] = value;
+
+    const res: any = await getClientByNameOrDocNumOrStatusApi(filter);
+
+    if (res?.status == 200) {
+      clients.value = parserClient(res?.data);
+    }
+
+    clientSelected.value = true;
+  }
 };
 
 const validateDataToCreateClient = (clientForm: ClientForm) => {
@@ -291,6 +309,7 @@ const validateDataToUpdateClient = (clientForm: ClientForm) => {
   else showButton.value = false;
 };
 
+// crud user
 const createOrUpdateUser = (clientForm: ClientForm, action: string) => {
   showLoading.value = true;
 
@@ -373,43 +392,6 @@ const getAllClients = async (currentPage: number, itemsPerPage: number) => {
   showLoading.value = false;
 };
 
-const parserClient = (data: any[]) => {
-  const clients = data.map((client) => ({
-    id: client._id,
-    name: client.name,
-    email: client.email,
-    docNum: client.docNum,
-    phone: client.phone,
-    surname: client.surname,
-    cep: client.cep,
-    street: client.street,
-    district: client.district,
-    city: client.city,
-    state: client.state,
-    status: client.deleted ? "Inativo" : "Ativo",
-  }));
-
-  return clients;
-};
-
-const selectFilter = async (value: string, key: string) => {
-  filter = { name: "", docNum: "", status: "" };
-
-  if (value != "") {
-    clients.value = [];
-
-    filter[key] = value;
-
-    const res: any = await getClientByNameOrDocNumOrStatusApi(filter);
-
-    if (res?.status == 200) {
-      clients.value = parserClient(res?.data);
-    }
-
-    clientSelected.value = true;
-  }
-};
-
 const getAllClientNames = async () => {
   const res: any = await getAllClientNamesApi();
 
@@ -434,13 +416,32 @@ const validateZipCode = async (value: string) => {
   if (/^\d{5}-?\d{3}$/.test(value)) {
     const adress = await getAdress(value);
 
-    //client.value.street = "";
+    client.value.street = "";
     client.value.district = "";
     client.value.city = "";
     client.value.state = "";
 
     parseAdress(adress);
   }
+};
+
+const parserClient = (data: any[]) => {
+  const clients = data.map((client) => ({
+    id: client._id,
+    name: client.name,
+    email: client.email,
+    docNum: client.docNum,
+    phone: client.phone,
+    surname: client.surname,
+    cep: client.cep,
+    street: client.street,
+    district: client.district,
+    city: client.city,
+    state: client.state,
+    status: client.deleted ? "Inativo" : "Ativo",
+  }));
+
+  return clients;
 };
 
 const parseAdress = (addressData: IViaCepApi) => {

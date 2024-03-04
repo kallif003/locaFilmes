@@ -213,6 +213,24 @@ const changeVariableState = () => {
   showLoading.value = false;
 };
 
+const selectFilter = async (value: string, key: string) => {
+  filter = { name: "", docNum: "", status: "" };
+
+  if (value != "") {
+    users.value = [];
+
+    filter[key] = value;
+
+    const res: any = await getUsersByNameOrDocNumApi(filter);
+
+    if (res?.status == 200) {
+      users.value = parseUser(res?.data);
+    }
+
+    userSelected.value = true;
+  }
+};
+
 const validateDataToCreateUser = (userForm: UseForm) => {
   let validate = [];
 
@@ -341,24 +359,6 @@ const parseUser = (data: any[]) => {
   }));
 
   return users;
-};
-
-const selectFilter = async (value: string, key: string) => {
-  filter = { name: "", docNum: "", status: "" };
-
-  if (value != "") {
-    users.value = [];
-
-    filter[key] = value;
-
-    const res: any = await getUsersByNameOrDocNumApi(filter);
-
-    if (res?.status == 200) {
-      users.value = parseUser(res?.data);
-    }
-
-    userSelected.value = true;
-  }
 };
 
 const getAllNames = async () => {
