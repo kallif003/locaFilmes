@@ -11,6 +11,13 @@ export interface IInputVariant {
   input: string;
 }
 
+export interface IFilter {
+  name: string | null;
+  docNum: string | null;
+  status: string | null;
+  [key: string]: string | null;
+}
+
 export interface IContainerVariant {
   login: string;
   loadingContainer: string;

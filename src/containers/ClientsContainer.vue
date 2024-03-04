@@ -41,16 +41,12 @@
     <Wrapper type="header">
       <Wrapper type="filter">
         <ClientFilter
+          :clientIsSelected="clientSelected"
           :clients="clientName"
           :docNum="docNum"
-          :selectStatus="selectStatus"
-          :selectClientByDocNum="selectDocNum"
-          :selectClient="selectClient"
+          :selectFilter="selectFilter"
+          @clientFilterCleaning="clientFilterCleaning"
         />
-
-        <button @click="clientFilterCleaning" v-if="clientSelected">
-          Limpar<v-icon icon="mdi-close" />
-        </button>
       </Wrapper>
 
       <Button
@@ -107,7 +103,13 @@ import { useHead } from "@unhead/vue";
 import EmptyTable from "@/components/molecules/EmptyTable.vue";
 import { Actions } from "@/utils/enum";
 import { onMounted, ref, watch } from "vue";
-import { ClientForm, IClient, IMessage, IViaCepApi } from "@/utils/interfaces";
+import {
+  ClientForm,
+  IClient,
+  IFilter,
+  IMessage,
+  IViaCepApi,
+} from "@/utils/interfaces";
 import useProps from "@/context/useProps";
 import {
   createClientApi,
@@ -127,6 +129,12 @@ useHead({
 const { inputWrappingStyle, setTotalPages, maskZipCode } = useProps();
 
 const actions = ["Atualizar", "Deletar"];
+
+let filter: IFilter = {
+  name: "",
+  docNum: "",
+  status: "",
+};
 
 let showLoading = ref(false);
 let showDeleteModal = ref(false);
@@ -384,47 +392,15 @@ const parserClient = (data: any[]) => {
   return clients;
 };
 
-const selectStatus = async (status: string) => {
-  if (status != "") {
+const selectFilter = async (value: string, key: string) => {
+  filter = { name: "", docNum: "", status: "" };
+
+  if (value != "") {
     clients.value = [];
 
-    const res: any = await getClientByNameOrDocNumOrStatusApi(
-      null,
-      null,
-      status
-    );
+    filter[key] = value;
 
-    if (res?.status == 200) {
-      clients.value = parserClient(res?.data);
-    }
-
-    clientSelected.value = true;
-  }
-};
-
-const selectDocNum = async (docNum: string) => {
-  if (docNum != "") {
-    clients.value = [];
-
-    const res: any = await getClientByNameOrDocNumOrStatusApi(
-      null,
-      docNum,
-      null
-    );
-
-    if (res?.status == 200) {
-      clients.value = parserClient(res?.data);
-    }
-
-    clientSelected.value = true;
-  }
-};
-
-const selectClient = async (name: string) => {
-  if (name != "") {
-    clients.value = [];
-
-    const res: any = await getClientByNameOrDocNumOrStatusApi(name, null, null);
+    const res: any = await getClientByNameOrDocNumOrStatusApi(filter);
 
     if (res?.status == 200) {
       clients.value = parserClient(res?.data);
